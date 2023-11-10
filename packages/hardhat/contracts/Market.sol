@@ -38,11 +38,15 @@ contract Market is Ownable {
 	}
 
 	/** Function to handle contest entry
-	 *
-	 * sends 1,000 GLD tokens to the msg.sender
+	 * @notice sends 1,000 GLD tokens to the msg.sender
+	 * @notice msg.sender must have 0 GLD tokens to enter
 	 */
 
 	function enterContest() external {
+		require(
+			token.balanceOf(msg.sender) == 0,
+			"Please return GLD tokens to market before entering a new contest"
+		);
 		token.transfer(msg.sender, 1000 * 10 ** 18);
 	}
 }

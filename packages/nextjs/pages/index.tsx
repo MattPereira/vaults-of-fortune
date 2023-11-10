@@ -26,14 +26,19 @@ const Home: NextPage = () => {
   return (
     <>
       <MetaHeader />
-      <div className="px-10">
-        <h1 className="text-center my-14 text-6xl font-cubano">Vaults Of Fortune</h1>
+      <div className="bg-base-300 mb-10">
+        <h1 className="text-6xl text-center font-cubano my-14">Vaults Of Fortune</h1>
 
-        <div className="bg-base-100 h-72 mb-14 rounded-xl grid grid-cols-2 p-5">
+        <div className="rounded-xl grid grid-cols-3">
           <div>
             <h3 className="text-center text-2xl font-cubano">Leaderboard</h3>
           </div>
 
+          <div>
+            <h5 className="text-accent text-center font-cubano text-4xl mb-10">
+              Your Gold Balance: {formatEther(userGoldBalance || 0n)}
+            </h5>
+          </div>
           <div>
             <h3 className="text-center text-2xl font-cubano">Round Info</h3>
             <p>Time remaining</p>
@@ -48,16 +53,15 @@ const Home: NextPage = () => {
           </div>
         </div>
 
-        <div className="text-center mb-5">
-          <button className="btn btn-accent" onClick={() => enterContest()}>
+        <div className="text-center my-10">
+          <button className="btn btn-warning" onClick={() => enterContest()}>
             Enter Contest
           </button>
         </div>
+      </div>
 
-        <h5 className="text-accent text-center font-cubano text-4xl mb-10">
-          Your Gold Balance: {formatEther(userGoldBalance || 0n)}
-        </h5>
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      <div className="px-10">
+        <div className="grid grid-cols-1 gap-8">
           <Vaults />
         </div>
       </div>

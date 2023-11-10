@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from "react";
 import Image from "next/image";
 import { formatEther, formatUnits, parseUnits } from "viem";
 import { useAccount } from "wagmi";
-import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { useDeployedContractInfo, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
 export const Vaults = () => {
   const [depositState, setDepositState] = useState({
@@ -20,16 +20,20 @@ export const Vaults = () => {
     args: [account.address],
   });
 
-  //   const {
-  //     writeAsync: approve,
-  //     // isLoading,
-  //     // isMining,
-  //   } = useScaffoldContractWrite({
-  //     contractName: "GoldToken",
-  //     functionName: "approve",
-  //     args: [spender, amount],
-  //     blockConfirmations: 1,
-  //   });
+  // ContractName: name of the deployed contract
+  const { data: lowRiskVaultContract } = useDeployedContractInfo("LowRiskVault");
+  const { data: mediumRiskVaultContract } = useDeployedContractInfo("MediumRiskVault");
+  const { data: highRiskVaultContract } = useDeployedContractInfo("HighRiskVault");
+
+  const {
+    writeAsync: approve,
+    // isLoading,
+    // isMining,
+  } = useScaffoldContractWrite({
+    contractName: "GoldToken",
+    functionName: "approve",
+    args: ["0x", 0n],
+  });
 
   const { data: lowRiskTotalAssets } = useScaffoldContractRead({
     contractName: "LowRiskVault",
@@ -102,7 +106,17 @@ export const Vaults = () => {
       totalSupply: lowRiskTotalSupply,
       depositAmount: depositState.lowRisk.amount,
       depositPercentage: depositState.lowRisk.percentage,
-      handleDepositTx: () => depositLowRisk(),
+      handleDepositTx: async () => {
+        await approve({ args: [lowRiskVaultContract?.address, parseUnits(depositState.lowRisk.amount, 18)] });
+        await depositLowRisk();
+        setDepositState(prevState => ({
+          ...prevState,
+          lowRisk: {
+            percentage: 0,
+            amount: "0",
+          },
+        }));
+      },
     },
     {
       key: "mediumRisk",
@@ -111,7 +125,17 @@ export const Vaults = () => {
       totalSupply: mediumRiskTotalSupply,
       depositAmount: depositState.mediumRisk.amount,
       depositPercentage: depositState.mediumRisk.percentage,
-      handleDepositTx: () => depositMediumRisk(),
+      handleDepositTx: async () => {
+        await approve({ args: [mediumRiskVaultContract?.address, parseUnits(depositState.mediumRisk.amount, 18)] });
+        await depositMediumRisk();
+        setDepositState(prevState => ({
+          ...prevState,
+          mediumRisk: {
+            percentage: 0,
+            amount: "0",
+          },
+        }));
+      },
     },
     {
       key: "highRisk",
@@ -120,7 +144,18 @@ export const Vaults = () => {
       totalSupply: highRiskTotalSupply,
       depositAmount: depositState.highRisk.amount,
       depositPercentage: depositState.highRisk.percentage,
-      handleDepositTx: () => depositHighRisk(),
+      handleDepositTx: async () => {
+        await approve({ args: [highRiskVaultContract?.address, parseUnits(depositState.highRisk.amount, 18)] });
+
+        await depositHighRisk(),
+          setDepositState(prevState => ({
+            ...prevState,
+            highRisk: {
+              percentage: 0,
+              amount: "0",
+            },
+          }));
+      },
     },
   ];
 
@@ -137,53 +172,103 @@ export const Vaults = () => {
     }));
   };
 
-  console.log("DEPOSIT STATE", depositState);
-
   return (
     <>
       {vaults.map(vault => {
         return (
           <div key={vault.title}>
-            <h2 className="text-center mb-5 text-4xl font-cubano">{vault.title}</h2>
+            <h2 className="mb-5 text-4xl font-cubano">{vault.title}</h2>
+            <div className="flex gap-8 flex-wrap mb-10">
+              <div>
+                <div className="rounded-2xl overflow-hidden">
+                  <Image src="/vault.png" width="250" height="250" alt="cartoon vault" />
+                </div>
+              </div>
 
-            <div className="overflow-x-auto flex justify-center">
-              <table className="table w-1/2">
-                <tbody>
-                  <tr>
-                    <th>Total Assets</th>
-                    <td>{formatUnits(vault.totalAssets || 0n, 18)} GLD</td>
-                  </tr>
-                  <tr>
-                    <th>Total Supply</th>
-                    <td>{formatUnits(vault.totalSupply || 0n, 18)} Shares</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="flex justify-center mb-5">
-              <div className="rounded-2xl overflow-hidden">
-                <Image src="/vault.png" width="350" height="350" alt="cartoon vault" />
-              </div>
-            </div>
-            <div className="flex flex-col justify-center gap-8">
-              <div className="flex items-center gap-4">
-                <div className="mr-3">{vault.depositPercentage}%</div>
-                <input
-                  type="range"
-                  min={0}
-                  max="100"
-                  value={vault.depositPercentage}
-                  onChange={event => handleDepositChange(event, vault.key)}
-                  className="range"
-                />
-                <button className="btn btn-accent w-28" onClick={vault.handleDepositTx}>
-                  Deposit
-                </button>
-              </div>
-              {/* <div className="flex items-center gap-4">
+              <div className="flex flex-col gap-8 grow justify-center">
+                <div className="flex items-center gap-8">
+                  <div>
+                    <div className="stats shadow">
+                      <div className="stat">
+                        <div className="stat-title">Total Assets</div>
+                        <div className="stat-value text-white text-2xl">
+                          {formatUnits(vault.totalAssets || 0n, 18)} GLD
+                        </div>
+                      </div>
+                      <div className="stat">
+                        <div className="stat-title">Total Supply</div>
+                        <div className="stat-value text-white text-2xl">
+                          {formatUnits(vault.totalSupply || 0n, 18)} Shares
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="w-full">
+                    <div className="flex items-center gap-4">
+                      <div className="mr-3">{vault.depositPercentage}%</div>
+                      <input
+                        type="range"
+                        min={0}
+                        max="100"
+                        value={vault.depositPercentage}
+                        onChange={event => handleDepositChange(event, vault.key)}
+                        className="range"
+                      />
+                      <div className="flex justify-center">
+                        <div className="mr-1">{Number(vault.depositAmount).toFixed(2)}</div>GLD
+                      </div>
+                      <button className="btn btn-accent w-28" onClick={vault.handleDepositTx}>
+                        Deposit
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-8">
+                  <div>
+                    <div className="stats shadow">
+                      <div className="stat">
+                        <div className="stat-title">Your Assets</div>
+                        <div className="stat-value text-white text-2xl">
+                          {formatUnits(vault.totalAssets || 0n, 18)} GLD
+                        </div>
+                      </div>
+                      <div className="stat">
+                        <div className="stat-title">Your Supply</div>
+                        <div className="stat-value text-white text-2xl">
+                          {formatUnits(vault.totalSupply || 0n, 18)} Shares
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="w-full">
+                    <div className="flex items-center gap-4">
+                      <div className="mr-3">{vault.depositPercentage}%</div>
+                      <input
+                        type="range"
+                        min={0}
+                        max="100"
+                        value={vault.depositPercentage}
+                        onChange={event => handleDepositChange(event, vault.key)}
+                        className="range"
+                      />
+                      <div className="flex justify-center">
+                        <div className="mr-1">{Number(vault.depositAmount).toFixed(2)}</div>GLD
+                      </div>
+                      <button className="btn btn-accent w-28" onClick={vault.handleDepositTx}>
+                        Withdraw
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* <div className="flex items-center gap-4">
                 <input type="range" min={0} max="100" value="40" className="range" />
                 <button className="btn btn-accent w-28">Redeem</button>
               </div> */}
+              </div>
             </div>
           </div>
         );
