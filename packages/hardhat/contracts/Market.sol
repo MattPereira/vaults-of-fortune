@@ -36,4 +36,13 @@ contract Market is Ownable {
 		mediumRiskVault = IVault(_mediumRiskVault);
 		highRiskVault = IVault(_highRiskVault);
 	}
+
+	/** Function to handle contest entry
+	 *
+	 * sends 1,000 GLD tokens to the msg.sender
+	 */
+
+	function enterContest() external {
+		token.transfer(msg.sender, 1000 * 10 ** 18);
+	}
 }

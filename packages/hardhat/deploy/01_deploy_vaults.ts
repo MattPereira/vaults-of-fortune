@@ -45,6 +45,10 @@ const deployVaults: DeployFunction = async function (hre: HardhatRuntimeEnvironm
   await lowRiskVault.transferOwnership(market.address);
   await mediumRiskVault.transferOwnership(market.address);
   await highRiskVault.transferOwnership(market.address);
+
+  // 4. Send all the gold to the market
+  const goldToken = await hre.ethers.getContract("GoldToken", deployer);
+  await goldToken.transfer(market.address, await goldToken.balanceOf(deployer));
 };
 
 export default deployVaults;
