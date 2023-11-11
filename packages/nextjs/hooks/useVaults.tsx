@@ -13,6 +13,8 @@ export interface IVaultManager {
   deposit: () => Promise<void>;
   withdrawAmount: string;
   withdraw: () => Promise<void>;
+  minimumROI: bigint | undefined;
+  maximumROI: bigint | undefined;
 }
 
 type VaultContractNames = "HighRiskVault" | "LowRiskVault" | "MediumRiskVault";
@@ -33,6 +35,16 @@ export function useVaultManager(
   const account = useAccount();
 
   const { data: vaultContract } = useDeployedContractInfo(vaultContractName);
+
+  const { data: minimumROI } = useScaffoldContractRead({
+    contractName: vaultContractName,
+    functionName: "MINIMUM_ROI_PERCENTAGE",
+  });
+
+  const { data: maximumROI } = useScaffoldContractRead({
+    contractName: vaultContractName,
+    functionName: "MAXIMUM_ROI_PERCENTAGE",
+  });
 
   const { data: totalAssets } = useScaffoldContractRead({
     contractName: vaultContractName,
@@ -85,5 +97,7 @@ export function useVaultManager(
     depositAmount,
     withdraw,
     withdrawAmount,
+    minimumROI,
+    maximumROI,
   };
 }

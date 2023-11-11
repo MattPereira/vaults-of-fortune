@@ -15,6 +15,9 @@ import "./IVault.sol";
  */
 
 contract MediumRiskVault is Ownable, ERC4626, IVault {
+	int public constant MINIMUM_ROI_PERCENTAGE = -50;
+	uint public constant MAXIMUM_ROI_PERCENTAGE = 50;
+
 	constructor(
 		IERC20 _asset
 	) ERC4626(_asset) Ownable() ERC20("Low Risk Vault Token", "lvGLD") {}

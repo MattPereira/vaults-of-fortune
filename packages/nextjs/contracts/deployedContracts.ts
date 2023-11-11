@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     GoldToken: {
-      address: "0x51A1ceB83B83F1985a81C295d1fF28Afef186E02",
+      address: "0x5067457698Fd6Fa1C6964e416b3f42713513B3dD",
       abi: [
         {
           inputs: [],
@@ -287,7 +287,7 @@ const deployedContracts = {
       ],
     },
     HighRiskVault: {
-      address: "0x0355B7B8cb128fA5692729Ab3AAa199C1753f726",
+      address: "0xCace1b78160AE76398F486c8a18044da0d66d86D",
       abi: [
         {
           inputs: [
@@ -436,6 +436,32 @@ const deployedContracts = {
           ],
           name: "Withdraw",
           type: "event",
+        },
+        {
+          inputs: [],
+          name: "MAXIMUM_ROI_PERCENTAGE",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "MINIMUM_ROI_PERCENTAGE",
+          outputs: [
+            {
+              internalType: "int256",
+              name: "",
+              type: "int256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
         },
         {
           inputs: [
@@ -1028,7 +1054,7 @@ const deployedContracts = {
       ],
     },
     LowRiskVault: {
-      address: "0x36b58F5C1969B7b6591D752ea6F5486D069010AB",
+      address: "0x18E317A7D70d8fBf8e6E893616b52390EbBdb629",
       abi: [
         {
           inputs: [
@@ -1177,6 +1203,32 @@ const deployedContracts = {
           ],
           name: "Withdraw",
           type: "event",
+        },
+        {
+          inputs: [],
+          name: "MAXIMUM_ROI_PERCENTAGE",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "MINIMUM_ROI_PERCENTAGE",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
         },
         {
           inputs: [
@@ -1756,7 +1808,7 @@ const deployedContracts = {
       ],
     },
     Market: {
-      address: "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB",
+      address: "0xD5ac451B0c50B9476107823Af206eD814a2e2580",
       abi: [
         {
           inputs: [
@@ -1898,7 +1950,7 @@ const deployedContracts = {
       ],
     },
     MediumRiskVault: {
-      address: "0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7",
+      address: "0x4b6aB5F819A515382B0dEB6935D793817bB4af28",
       abi: [
         {
           inputs: [
@@ -2047,6 +2099,32 @@ const deployedContracts = {
           ],
           name: "Withdraw",
           type: "event",
+        },
+        {
+          inputs: [],
+          name: "MAXIMUM_ROI_PERCENTAGE",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "MINIMUM_ROI_PERCENTAGE",
+          outputs: [
+            {
+              internalType: "int256",
+              name: "",
+              type: "int256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
         },
         {
           inputs: [

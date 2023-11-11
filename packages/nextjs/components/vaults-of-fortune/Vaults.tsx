@@ -113,7 +113,7 @@ export const Vaults = () => {
                     <div className="stats shadow">
                       <div className="stat bg-red-400 w-28">
                         <div className="stat-title text-secondary">Min ROI</div>
-                        <div className="stat-value text-secondary text-xl">+ 2 %</div>
+                        <div className="stat-value text-secondary text-xl">{Number(vault.minimumROI) || 0}%</div>
                       </div>
                     </div>
                   </div>
@@ -174,7 +174,7 @@ export const Vaults = () => {
                     <div className="stats shadow">
                       <div className="stat bg-green-400 w-28">
                         <div className="stat-title text-secondary">Max ROI</div>
-                        <div className="stat-value text-secondary text-xl">+ 10 %</div>
+                        <div className="stat-value text-secondary text-xl">+{Number(vault.maximumROI) || 0}%</div>
                       </div>
                     </div>
                   </div>

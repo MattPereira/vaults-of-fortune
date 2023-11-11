@@ -13,6 +13,9 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
  */
 
 contract LowRiskVault is ERC4626, Ownable {
+	uint public constant MINIMUM_ROI_PERCENTAGE = 2;
+	uint public constant MAXIMUM_ROI_PERCENTAGE = 10;
+
 	constructor(
 		IERC20 _asset
 	) ERC4626(_asset) Ownable() ERC20("Low Risk Vault Token", "lvGLD") {}
