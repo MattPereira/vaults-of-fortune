@@ -9,20 +9,27 @@ export interface IVaultManager {
   maxWithdraw: bigint | undefined;
   maxRedeem: bigint | undefined;
   depositAmount: string;
-  approveAndDeposit: () => Promise<void>;
+  approve: () => Promise<void>;
+  deposit: () => Promise<void>;
+  withdrawAmount: string;
+  withdraw: () => Promise<void>;
 }
 
 type VaultContractNames = "HighRiskVault" | "LowRiskVault" | "MediumRiskVault";
 
 /** Hook for interacting with vault contracts
  *
- * @param vaultContractName
- * @param depositAmount
- * @param withdrawAmount
+ * @param vaultContractName the name of the vault contract to interact with
+ * @param depositAmount human readable amount of GLD to deposit
+ * @param withdrawAmount human readable amount of GLD to withdraw
  * @returns
  */
 
-export function useVaultManager(vaultContractName: VaultContractNames, depositAmount: string): IVaultManager {
+export function useVaultManager(
+  vaultContractName: VaultContractNames,
+  depositAmount: string,
+  withdrawAmount: string,
+): IVaultManager {
   const account = useAccount();
 
   const { data: vaultContract } = useDeployedContractInfo(vaultContractName);
@@ -49,22 +56,23 @@ export function useVaultManager(vaultContractName: VaultContractNames, depositAm
     args: [account.address],
   });
 
-  const { writeAsync: deposit } = useScaffoldContractWrite({
-    contractName: vaultContractName,
-    functionName: "deposit",
-    args: [parseUnits(depositAmount, 18), account.address],
-  });
-
   const { writeAsync: approve } = useScaffoldContractWrite({
     contractName: "GoldToken",
     functionName: "approve",
     args: [vaultContract?.address, parseUnits(depositAmount, 18)],
   });
 
-  const approveAndDeposit = async () => {
-    await approve();
-    await deposit();
-  };
+  const { writeAsync: deposit } = useScaffoldContractWrite({
+    contractName: vaultContractName,
+    functionName: "deposit",
+    args: [parseUnits(depositAmount, 18), account.address],
+  });
+
+  const { writeAsync: withdraw } = useScaffoldContractWrite({
+    contractName: vaultContractName,
+    functionName: "withdraw",
+    args: [parseUnits(withdrawAmount, 18), account.address, account.address],
+  });
 
   return {
     address: vaultContract?.address,
@@ -72,7 +80,10 @@ export function useVaultManager(vaultContractName: VaultContractNames, depositAm
     totalSupply,
     maxWithdraw,
     maxRedeem,
+    approve,
+    deposit,
     depositAmount,
-    approveAndDeposit,
+    withdraw,
+    withdrawAmount,
   };
 }

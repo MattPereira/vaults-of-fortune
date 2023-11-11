@@ -84,7 +84,7 @@ const Home: NextPage = () => {
         </div>
 
         <div className="text-center my-10">
-          <button className="btn btn-warning" onClick={() => enterContest()}>
+          <button className="btn bg-yellow-400 text-secondary" onClick={() => enterContest()}>
             Enter Contest
           </button>
         </div>
