@@ -23,6 +23,42 @@ const Home: NextPage = () => {
     functionName: "enterContest",
   });
 
+  const { data: lowRiskAssets } = useScaffoldContractRead({
+    contractName: "LowRiskVault",
+    functionName: "maxWithdraw",
+    args: [account.address],
+  });
+
+  const { data: mediumRiskAssets } = useScaffoldContractRead({
+    contractName: "MediumRiskVault",
+    functionName: "maxWithdraw",
+    args: [account.address],
+  });
+
+  const { data: highRiskAssets } = useScaffoldContractRead({
+    contractName: "HighRiskVault",
+    functionName: "maxWithdraw",
+    args: [account.address],
+  });
+
+  const formattedLowRisk = +formatEther(lowRiskAssets || 0n);
+  const formattedMediumRisk = +formatEther(mediumRiskAssets || 0n);
+  const formattedHighRisk = +formatEther(highRiskAssets || 0n);
+
+  const totalAssets = formattedLowRisk + formattedMediumRisk + formattedHighRisk;
+
+  let lowRiskAllocation = 0;
+  let mediumRiskAllocation = 0;
+  let highRiskAllocation = 0;
+
+  if (totalAssets > 0) {
+    lowRiskAllocation = Math.round((formattedLowRisk / totalAssets) * 100);
+    mediumRiskAllocation = Math.round((formattedMediumRisk / totalAssets) * 100);
+    highRiskAllocation = Math.round((formattedHighRisk / totalAssets) * 100);
+  }
+
+  console.log(lowRiskAllocation, mediumRiskAllocation, highRiskAllocation);
+
   return (
     <>
       <MetaHeader />
@@ -41,24 +77,36 @@ const Home: NextPage = () => {
             </div>
             <div className="flex justify-around">
               <div>
-                <div className="radial-progress" style={{ "--value": 70 } as React.CSSProperties} role="progressbar">
-                  20%
+                <div
+                  className="radial-progress"
+                  style={{ "--value": lowRiskAllocation } as React.CSSProperties}
+                  role="progressbar"
+                >
+                  {lowRiskAllocation} %
                 </div>
                 <p className="text-center">Low Risk</p>
               </div>
 
               <div>
-                <div className="radial-progress" style={{ "--value": 70 } as React.CSSProperties} role="progressbar">
-                  10%
+                <div
+                  className="radial-progress"
+                  style={{ "--value": mediumRiskAllocation } as React.CSSProperties}
+                  role="progressbar"
+                >
+                  {mediumRiskAllocation} %
                 </div>
-                <p className="text-center">Low Risk</p>
+                <p className="text-center">Medium Risk</p>
               </div>
 
               <div>
-                <div className="radial-progress" style={{ "--value": 70 } as React.CSSProperties} role="progressbar">
-                  70%
+                <div
+                  className="radial-progress"
+                  style={{ "--value": highRiskAllocation } as React.CSSProperties}
+                  role="progressbar"
+                >
+                  {highRiskAllocation} %
                 </div>
-                <p className="text-center">Low Risk</p>
+                <p className="text-center">High Risk</p>
               </div>
             </div>
           </div>

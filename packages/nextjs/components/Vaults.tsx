@@ -150,6 +150,7 @@ export const Vaults = () => {
                       </div>
                       <button
                         className="btn btn-accent w-28"
+                        disabled={!((userGoldBalance ?? 0) > 0)}
                         onClick={async () => {
                           await vault.approve();
                           await vault.deposit();
@@ -211,6 +212,7 @@ export const Vaults = () => {
                       </div>
                       <button
                         className="btn btn-accent w-28"
+                        disabled={!((vault.maxWithdraw ?? 0) > 0)}
                         onClick={async () => {
                           await vault.withdraw();
                           setVaultWithdraw(prevState => ({

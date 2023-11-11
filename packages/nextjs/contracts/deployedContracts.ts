@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     GoldToken: {
-      address: "0x4826533B4897376654Bb4d4AD88B7faFD0C98528",
+      address: "0x51A1ceB83B83F1985a81C295d1fF28Afef186E02",
       abi: [
         {
           inputs: [],
@@ -287,7 +287,7 @@ const deployedContracts = {
       ],
     },
     HighRiskVault: {
-      address: "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
+      address: "0x0355B7B8cb128fA5692729Ab3AAa199C1753f726",
       abi: [
         {
           inputs: [
@@ -1028,7 +1028,7 @@ const deployedContracts = {
       ],
     },
     LowRiskVault: {
-      address: "0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf",
+      address: "0x36b58F5C1969B7b6591D752ea6F5486D069010AB",
       abi: [
         {
           inputs: [
@@ -1756,7 +1756,7 @@ const deployedContracts = {
       ],
     },
     Market: {
-      address: "0x9d4454B023096f34B160D6B654540c56A1F81688",
+      address: "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB",
       abi: [
         {
           inputs: [
@@ -1898,7 +1898,7 @@ const deployedContracts = {
       ],
     },
     MediumRiskVault: {
-      address: "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF",
+      address: "0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7",
       abi: [
         {
           inputs: [
