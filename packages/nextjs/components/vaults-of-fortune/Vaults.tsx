@@ -111,9 +111,11 @@ export const Vaults = () => {
                 <div className="flex items-center gap-8">
                   <div>
                     <div className="stats shadow">
-                      <div className="stat bg-red-400 w-28">
-                        <div className="stat-title text-secondary">Min ROI</div>
-                        <div className="stat-value text-secondary text-xl">{Number(vault.minimumROI) || 0}%</div>
+                      <div
+                        className={`stat w-28 ${Number(vault.minimumROI) > 0 ? "bg-green-500/25" : "bg-red-500/25"} `}
+                      >
+                        <div className="stat-title text-white">Min ROI</div>
+                        <div className="stat-value text-white text-xl">{Number(vault.minimumROI) || 0}%</div>
                       </div>
                     </div>
                   </div>
@@ -172,9 +174,9 @@ export const Vaults = () => {
                 <div className="flex items-center gap-8">
                   <div>
                     <div className="stats shadow">
-                      <div className="stat bg-green-400 w-28">
-                        <div className="stat-title text-secondary">Max ROI</div>
-                        <div className="stat-value text-secondary text-xl">+{Number(vault.maximumROI) || 0}%</div>
+                      <div className="stat bg-green-500/25 w-28">
+                        <div className="stat-title text-white">Max ROI</div>
+                        <div className="stat-value text-white text-xl">+{Number(vault.maximumROI) || 0}%</div>
                       </div>
                     </div>
                   </div>
