@@ -15,19 +15,19 @@ import "./IVault.sol";
  */
 
 contract MediumRiskVault is Ownable, ERC4626, IVault {
-	int public constant MINIMUM_ROI_PERCENTAGE = -50;
-	int public constant MAXIMUM_ROI_PERCENTAGE = 50;
+	int public constant MIN_ROI = -50;
+	int public constant MAX_ROI = 50;
 
 	constructor(
 		IERC20 _asset
 	) ERC4626(_asset) Ownable() ERC20("Low Risk Vault Token", "lvGLD") {}
 
-	function simulateLoss(uint256 _amount) external override onlyOwner {
+	function simulateLoss(uint256 amount) external override onlyOwner {
 		require(
-			_amount <= IERC20(asset()).balanceOf(address(this)),
+			amount <= IERC20(asset()).balanceOf(address(this)),
 			"Insufficient asset balance in medium risk vault to simulate loss"
 		);
-		IERC20(asset()).transfer(owner(), _amount);
+		IERC20(asset()).transfer(owner(), amount);
 	}
 
 	// Explicitly override totalAssets function from ERC4626

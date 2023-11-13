@@ -439,7 +439,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "MAXIMUM_ROI_PERCENTAGE",
+          name: "MAX_ROI",
           outputs: [
             {
               internalType: "uint256",
@@ -452,7 +452,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "MINIMUM_ROI_PERCENTAGE",
+          name: "MIN_ROI",
           outputs: [
             {
               internalType: "int256",
@@ -1206,7 +1206,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "MAXIMUM_ROI_PERCENTAGE",
+          name: "MAX_ROI",
           outputs: [
             {
               internalType: "uint256",
@@ -1219,7 +1219,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "MINIMUM_ROI_PERCENTAGE",
+          name: "MIN_ROI",
           outputs: [
             {
               internalType: "uint256",
@@ -2102,7 +2102,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "MAXIMUM_ROI_PERCENTAGE",
+          name: "MAX_ROI",
           outputs: [
             {
               internalType: "uint256",
@@ -2115,7 +2115,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "MINIMUM_ROI_PERCENTAGE",
+          name: "MIN_ROI",
           outputs: [
             {
               internalType: "int256",

@@ -13,8 +13,8 @@ import "./IVault.sol";
  */
 
 contract HighRiskVault is Ownable, ERC4626, IVault {
-	int public constant MINIMUM_ROI_PERCENTAGE = -100;
-	int public constant MAXIMUM_ROI_PERCENTAGE = 100;
+	int public constant MIN_ROI = -100;
+	int public constant MAX_ROI = 100;
 
 	constructor(
 		IERC20 _asset

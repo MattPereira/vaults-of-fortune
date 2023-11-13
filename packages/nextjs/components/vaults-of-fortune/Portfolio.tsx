@@ -15,8 +15,6 @@ export const Portfolio = () => {
     args: [account.address],
   });
 
-  const formattedGoldBalance = +formatEther(goldBalance || 0n);
-
   const { data: lowRiskAssets } = useScaffoldContractRead({
     contractName: "LowRiskVault",
     functionName: "maxWithdraw",
@@ -38,27 +36,40 @@ export const Portfolio = () => {
   const formattedLowRisk = +formatEther(lowRiskAssets || 0n);
   const formattedMediumRisk = +formatEther(mediumRiskAssets || 0n);
   const formattedHighRisk = +formatEther(highRiskAssets || 0n);
+  const formattedGoldBalance = +formatEther(goldBalance || 0n);
 
-  const totalAssets = formattedLowRisk + formattedMediumRisk + formattedHighRisk;
+  const totalAssets = formattedLowRisk + formattedMediumRisk + formattedHighRisk + formattedGoldBalance;
 
   let lowRiskAllocation = 0;
   let mediumRiskAllocation = 0;
   let highRiskAllocation = 0;
+  let goldReservesAllocation = 0;
 
   if (totalAssets > 0) {
     lowRiskAllocation = Math.round((formattedLowRisk / totalAssets) * 100);
     mediumRiskAllocation = Math.round((formattedMediumRisk / totalAssets) * 100);
     highRiskAllocation = Math.round((formattedHighRisk / totalAssets) * 100);
+    goldReservesAllocation = Math.round((formattedGoldBalance / totalAssets) * 100);
   }
 
   const data = {
-    labels: ["Low Risk", "Medium Risk", "High Risk"],
+    labels: ["Low Risk", "Medium Risk", "High Risk", "Gold Reserves"],
     datasets: [
       {
         label: "%",
-        data: [lowRiskAllocation, mediumRiskAllocation, highRiskAllocation],
-        backgroundColor: ["rgba(75, 192, 192, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(255, 99, 132, 0.2)"],
-        borderColor: ["rgba(75, 192, 192, 1)", "rgba(255, 206, 86, 1)", "rgba(255, 99, 132, 1)"],
+        data: [lowRiskAllocation, mediumRiskAllocation, highRiskAllocation, goldReservesAllocation],
+        backgroundColor: [
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+        ],
+        borderColor: [
+          "rgba(75, 192, 192, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(255, 99, 132, 1)",
+          "rgba(153, 102, 255, 1)",
+        ],
         borderWidth: 1,
       },
     ],
@@ -75,7 +86,7 @@ export const Portfolio = () => {
       </div>
 
       <div className="text-center">
-        <div className="text-2xl">{totalAssets + formattedGoldBalance} GLD</div>
+        <div className="text-2xl">{totalAssets.toFixed(0)} GLD</div>
       </div>
     </>
   );

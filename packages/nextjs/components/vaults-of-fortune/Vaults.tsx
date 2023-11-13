@@ -108,7 +108,7 @@ export const Vaults = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-8 grow justify-center">
-                <div className="flex items-center gap-8">
+                <div className="flex items-center gap-8 flex-wrap">
                   <div>
                     <div className="stats shadow">
                       <div
@@ -136,7 +136,7 @@ export const Vaults = () => {
                     </div>
                   </div>
                   {/* Deposit Interface */}
-                  <div className="w-full">
+                  <div className="grow">
                     <div className="flex items-center gap-4">
                       <div className="mr-3">{vaultDeposit[vault.key].percentage}%</div>
                       <input
@@ -171,7 +171,7 @@ export const Vaults = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-8">
+                <div className="flex items-center gap-8 flex-wrap">
                   <div>
                     <div className="stats shadow">
                       <div className="stat bg-green-500/25 w-28">
@@ -198,7 +198,7 @@ export const Vaults = () => {
                   </div>
 
                   {/* Withdraw Interface */}
-                  <div className="w-full">
+                  <div className="grow">
                     <div className="flex items-center gap-4">
                       <div className="mr-3">{vaultWithdraw[vault.key].percentage}%</div>
                       <input

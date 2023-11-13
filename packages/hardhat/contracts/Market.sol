@@ -7,7 +7,9 @@ import "@chainlink/contracts/src/v0.8/automation/AutomationCompatible.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 
-import "./IVault.sol";
+import "./LowRiskVault.sol";
+import "./MediumRiskVault.sol";
+import "./HighRiskVault.sol";
 
 /** Market Contract
  *
@@ -22,21 +24,15 @@ import "./IVault.sol";
  * contestants allocate their GLD tokens into the vaults and get a return on investment
  * at the end of each round
  *
- *
- * @notice the rounds array is used to keep track of the current round
- * round number is index + 1 and after the 3rd round the array is cleared
- *
- * @notice use events to emit info necessary for leaderboard
- *
  */
 
 error Market__UpkeepNotNeeded();
 
 contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	enum RoundState {
-		OPEN, // 0
-		CALCULATING, // 1
-		CLOSED // 2
+		OPEN,
+		CALCULATING,
+		CLOSED
 	}
 
 	struct Round {
@@ -46,20 +42,20 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 
 	Round currentRound;
 	IERC20 public token;
-	IVault public lowRiskVault;
-	IVault public mediumRiskVault;
-	IVault public highRiskVault;
+	LowRiskVault public lowRiskVault;
+	MediumRiskVault public mediumRiskVault;
+	HighRiskVault public highRiskVault;
 	uint256 public roundInterval = 90 seconds;
 	uint256 public lastTimestamp;
 	address[] public players;
 
-	// VRF variables
+	// VRF requirements
 	VRFCoordinatorV2Interface public vrfCoordinator;
-	uint16 public requestConfirmations = 3; // min # of blocks until oracle responds
-	uint32 public numWords = 3; // how many random values
-	uint32 public callbackGasLimit; // for fulfillRandomWords
-	uint64 public subscriptionId; // for funding requests
 	bytes32 public keyHash; // max gas price to pay for request in wei
+	uint64 public subscriptionId; // for funding requests
+	uint16 public requestConfirmations; // min # of blocks until oracle responds
+	uint32 public callbackGasLimit; // for fulfillRandomWords
+	uint32 public numWords = 3; // how many random values
 
 	/**
 	 * @notice round set to 1 and state set to CLOSED to prevent trigger of upkeep
@@ -71,21 +67,25 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		address _mediumRiskVault,
 		address _highRiskVault,
 		address _vrfCoordinator,
-		uint32 _callbackGasLimit,
+		bytes32 _keyHash,
 		uint64 _subscriptionId,
-		bytes32 _keyHash
+		uint16 _requestConfirmations,
+		uint32 _callbackGasLimit
 	) {
 		token = IERC20(_token);
-		lowRiskVault = IVault(_lowRiskVault);
-		mediumRiskVault = IVault(_mediumRiskVault);
-		highRiskVault = IVault(_highRiskVault);
+		lowRiskVault = LowRiskVault(_lowRiskVault);
+		mediumRiskVault = MediumRiskVault(_mediumRiskVault);
+		highRiskVault = HighRiskVault(_highRiskVault);
 		currentRound.state = RoundState.CLOSED;
 		currentRound.number = 1;
 
 		vrfCoordinator = VRFCoordinatorV2Interface(_vrfCoordinator);
-		subscriptionId = _subscriptionId;
-		callbackGasLimit = _callbackGasLimit;
 		keyHash = _keyHash;
+
+		subscriptionId = _subscriptionId;
+		requestConfirmations = _requestConfirmations;
+
+		callbackGasLimit = _callbackGasLimit;
 	}
 
 	/** Function to handle contest entry
@@ -124,6 +124,7 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		bytes memory /* checkData */
 	)
 		public
+		view
 		override
 		returns (bool upkeepNeeded, bytes memory /* performData */)
 	{
@@ -163,9 +164,9 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	 * @notice how to use uint256 to decide if vault should lose assets
 	 *
 	 * 1. Distribute/Take tokens to/from the vaults according to random numbers provided by VRF
-	 * 4. Update the lastTimestamp to the current block.timestamp to start the countdown for the next round
-	 * 5. Manage the round state (increment and set to OPEN if < 3, otherwise set to CLOSED)
-	 * 6. emit event that uses vault contracts to sum total assets each player has
+	 * 2. Manage the round state (increment and set to OPEN if < 3, otherwise set to CLOSED)
+	 * 3. Update the lastTimestamp to the current block.timestamp to start the countdown for the next round
+	 * 4. emit event that uses vault contracts to sum total assets each player has
 	 */
 
 	function fulfillRandomWords(
@@ -189,12 +190,12 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		lastTimestamp = block.timestamp;
 	}
 
-	function manageLowRiskVault(uint256 randomNumber) internal {
+	function manageLowRiskVault(uint256 randomNumber) public {
 		uint256 lowRiskReturnPercentage = randomNumber %
 			uint(
-				lowRiskVault.MAXIMUM_ROI_PERCENTAGE() -
-					lowRiskVault.MINIMUM_ROI_PERCENTAGE() +
-					lowRiskVault.MINIMUM_ROI_PERCENTAGE()
+				lowRiskVault.MAX_ROI() -
+					lowRiskVault.MIN_ROI() +
+					lowRiskVault.MIN_ROI()
 			);
 
 		uint256 lowRiskTransferAmount = (lowRiskVault.totalAssets() *
@@ -203,31 +204,39 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		token.transfer(address(lowRiskVault), lowRiskTransferAmount);
 	}
 
-	function manageMediumRiskVault(uint256 randomNumber) internal {
-		uint256 range = mediumRiskVault.MAXIMUM_ROI_PERCENTAGE() -
-			mediumRiskVault.MINIMUM_ROI_PERCENTAGE();
-		uint256 normalizedRandomNumber = randomNumber % (range + 1);
+	function manageMediumRiskVault(uint256 randomNumber) public {
+		uint256 range = abs(mediumRiskVault.MAX_ROI()) +
+			abs(mediumRiskVault.MIN_ROI()); // 100
+		uint256 normalizedRandomNumber = randomNumber % (range + 1); // 0 to 100
 
 		int256 returnPercentage = int256(normalizedRandomNumber) +
-			mediumRiskVault.MINIMUM_ROI_PERCENTAGE();
+			mediumRiskVault.MIN_ROI(); // - 50 to 50
 		int256 assetChange = (int256(mediumRiskVault.totalAssets()) *
 			returnPercentage) / 100;
 		if (assetChange < 0) {
-			mediumRiskVault.simulateLoss(uint256(-assetChange));
+			mediumRiskVault.simulateLoss(abs(assetChange));
 		} else {
 			token.transfer(address(mediumRiskVault), uint256(assetChange));
 		}
 	}
 
-	function manageHighRiskVault(uint256 randomNumber) internal {
+	function manageHighRiskVault(uint256 randomNumber) public {
 		uint256 normalizedRandomNumber = randomNumber % 201;
 		int256 returnPercentage = int256(normalizedRandomNumber) - 100;
 		int256 assetChange = (int256(highRiskVault.totalAssets()) *
 			returnPercentage) / 100;
 		if (assetChange < 0) {
-			highRiskVault.simulateLoss(uint256(-assetChange));
+			highRiskVault.simulateLoss(abs(assetChange));
 		} else {
 			token.transfer(address(highRiskVault), uint256(assetChange));
 		}
+	}
+
+	/** Helper function to get absolute value of int256
+	 * @param x the int256 to get the absolute value of
+	 */
+
+	function abs(int256 x) internal pure returns (uint256) {
+		return uint256(x >= 0 ? x : -x);
 	}
 }

@@ -38,12 +38,12 @@ export function useVaultManager(
 
   const { data: minimumROI } = useScaffoldContractRead({
     contractName: vaultContractName,
-    functionName: "MINIMUM_ROI_PERCENTAGE",
+    functionName: "MIN_ROI",
   });
 
   const { data: maximumROI } = useScaffoldContractRead({
     contractName: vaultContractName,
-    functionName: "MAXIMUM_ROI_PERCENTAGE",
+    functionName: "MAX_ROI",
   });
 
   const { data: totalAssets } = useScaffoldContractRead({
