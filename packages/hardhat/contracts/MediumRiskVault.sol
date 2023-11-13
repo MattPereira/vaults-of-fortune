@@ -16,7 +16,7 @@ import "./IVault.sol";
 
 contract MediumRiskVault is Ownable, ERC4626, IVault {
 	int public constant MINIMUM_ROI_PERCENTAGE = -50;
-	uint public constant MAXIMUM_ROI_PERCENTAGE = 50;
+	int public constant MAXIMUM_ROI_PERCENTAGE = 50;
 
 	constructor(
 		IERC20 _asset
@@ -28,5 +28,15 @@ contract MediumRiskVault is Ownable, ERC4626, IVault {
 			"Insufficient asset balance in medium risk vault to simulate loss"
 		);
 		IERC20(asset()).transfer(owner(), _amount);
+	}
+
+	// Explicitly override totalAssets function from ERC4626
+	function totalAssets()
+		public
+		view
+		override(ERC4626, IVault)
+		returns (uint256)
+	{
+		return ERC4626.totalAssets();
 	}
 }
