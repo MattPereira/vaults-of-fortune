@@ -1,9 +1,8 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
-import "./IVault.sol";
 
 /** Medium risk vault
  *
@@ -11,10 +10,11 @@ import "./IVault.sol";
  *
  * -50% to 50% ROI
  *
- * the "Market" contract will own this contract and call simulateLoss in bad market conditions
+ * @notice the "Market" contract will own this contract and call simulateLoss
+ * when specific VRF conditions unfold
  */
 
-contract MediumRiskVault is Ownable, ERC4626, IVault {
+contract MediumRiskVault is Ownable, ERC4626 {
 	int public constant MIN_ROI = -50;
 	int public constant MAX_ROI = 50;
 
@@ -22,21 +22,11 @@ contract MediumRiskVault is Ownable, ERC4626, IVault {
 		IERC20 _asset
 	) ERC4626(_asset) Ownable() ERC20("Low Risk Vault Token", "lvGLD") {}
 
-	function simulateLoss(uint256 amount) external override onlyOwner {
+	function simulateLoss(uint256 amount) external onlyOwner {
 		require(
 			amount <= IERC20(asset()).balanceOf(address(this)),
 			"Insufficient asset balance in medium risk vault to simulate loss"
 		);
 		IERC20(asset()).transfer(owner(), amount);
-	}
-
-	// Explicitly override totalAssets function from ERC4626
-	function totalAssets()
-		public
-		view
-		override(ERC4626, IVault)
-		returns (uint256)
-	{
-		return ERC4626.totalAssets();
 	}
 }

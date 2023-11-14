@@ -17,9 +17,9 @@ const deployMarket: DeployFunction = async function (hre: HardhatRuntimeEnvironm
 
   // 1. Deploy the market
   const chainId = await hre.ethers.provider.getNetwork().then(network => network.chainId);
-  console.log(networkConfig[chainId]);
 
-  const { vrfCoordinator, keyHash, subscriptionId, requestConfirmations, callbackGasLimit } = networkConfig[chainId];
+  const { vrfCoordinatorAddress, keyHash, subscriptionId, requestConfirmations, callbackGasLimit } =
+    networkConfig[chainId];
 
   await deploy("Market", {
     from: deployer,
@@ -28,7 +28,7 @@ const deployMarket: DeployFunction = async function (hre: HardhatRuntimeEnvironm
       lowRiskVault.address,
       mediumRiskVault.address,
       highRiskVault.address,
-      vrfCoordinator,
+      vrfCoordinatorAddress,
       keyHash,
       subscriptionId,
       requestConfirmations,

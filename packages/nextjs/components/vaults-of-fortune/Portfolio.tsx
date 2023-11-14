@@ -1,13 +1,41 @@
+import { useEffect, useState } from "react";
 import { ArcElement, Chart as ChartJS, Tooltip } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
-import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
+import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
 ChartJS.register(ArcElement, Tooltip);
 
 export const Portfolio = () => {
+  const [isPlayer, setIsPlayer] = useState(false);
   const account = useAccount();
+
+  const { data: players } = useScaffoldContractRead({
+    contractName: "Market",
+    functionName: "getPlayers",
+  });
+
+  console.log("players", players);
+
+  useEffect(() => {
+    console.log("players", players);
+    console.log("account.address", account.address);
+
+    if (players !== undefined && account.address !== undefined) {
+      console.log("here");
+      setIsPlayer(players.includes(account.address));
+    }
+  }, [players, account.address]);
+
+  const {
+    writeAsync: enterContest,
+    // isLoading,
+    // isMining,
+  } = useScaffoldContractWrite({
+    contractName: "Market",
+    functionName: "enterContest",
+  });
 
   const { data: goldBalance } = useScaffoldContractRead({
     contractName: "GoldToken",
@@ -77,17 +105,23 @@ export const Portfolio = () => {
 
   return (
     <>
-      <h3 className="text-white text-center font-cubano text-2xl">Your Portfolio</h3>
+      {isPlayer ? (
+        <>
+          <h3 className="text-white text-center font-cubano text-2xl">Your Portfolio</h3>
 
-      <div className="flex justify-center my-5">
-        <div className="w-[350px] h-[350px]">
-          <Doughnut data={data} />
+          <div className="flex justify-center my-5">
+            <div className="w-[350px] h-[350px]">
+              <Doughnut data={data} />
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="text-center mb-10">
+          <button className="btn bg-yellow-400 text-secondary" onClick={() => enterContest()}>
+            Enter Contest
+          </button>
         </div>
-      </div>
-
-      <div className="text-center">
-        <div className="text-2xl">{totalAssets.toFixed(0)} GLD</div>
-      </div>
+      )}
     </>
   );
 };

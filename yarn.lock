@@ -1434,15 +1434,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainlink/contracts@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "@chainlink/contracts@npm:0.8.0"
+"@chainlink/contracts@npm:^0.7.1":
+  version: 0.7.1
+  resolution: "@chainlink/contracts@npm:0.7.1"
   dependencies:
     "@eth-optimism/contracts": ^0.5.21
     "@openzeppelin/contracts": ~4.3.3
     "@openzeppelin/contracts-upgradeable-4.7.3": "npm:@openzeppelin/contracts-upgradeable@v4.7.3"
     "@openzeppelin/contracts-v0.7": "npm:@openzeppelin/contracts@v3.4.2"
-  checksum: 4165aa7fa5d28c2ebef4da72e117f78889da292cff03d736d5738e2a3842d5fd162718106c2c04e9acb41298813edc99a27c456217a00bfdd4b0dfb758802cd0
+  checksum: 49e6ef3b69d29bb6f819b7c3a25068290e2c4eddcc74d877297e17d00e32dc15a33762d8a36391f447c314ec7c0fc3045b7566547ed4ae9bae34f8a280ffd18c
   languageName: node
   linkType: hard
 
@@ -3718,7 +3718,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@se-2/hardhat@workspace:packages/hardhat"
   dependencies:
-    "@chainlink/contracts": ^0.8.0
+    "@chainlink/contracts": ^0.7.1
     "@ethersproject/abi": ~5.7.0
     "@ethersproject/providers": ~5.7.1
     "@matterlabs/hardhat-zksync-solc": ~0.3.17

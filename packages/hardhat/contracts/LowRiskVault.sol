@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
 // Use openzeppelin to inherit battle-tested implementations (ERC20, ERC721, etc)
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -19,4 +19,12 @@ contract LowRiskVault is ERC4626, Ownable {
 	constructor(
 		IERC20 _asset
 	) ERC4626(_asset) Ownable() ERC20("Low Risk Vault Token", "lvGLD") {}
+
+	function simulateLoss(uint256 amount) external onlyOwner {
+		require(
+			amount <= IERC20(asset()).balanceOf(address(this)),
+			"Insufficient asset balance in low risk vault to simulate loss"
+		);
+		IERC20(asset()).transfer(owner(), amount);
+	}
 }
