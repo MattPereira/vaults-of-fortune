@@ -100,136 +100,108 @@ export const Vaults = () => {
       {vaults.map(vault => {
         return (
           <div key={vault.title}>
-            <h2 className="mb-5 text-4xl font-cubano text-center">{vault.title}</h2>
+            <h2 className="mb-3 text-3xl font-cubano text-center">{vault.title}</h2>
+            <h6 className="text-center text-xl mb-3 ">
+              {Number(vault.minimumROI) || 0} to {Number(vault.maximumROI) || 0}% ROI
+            </h6>
             <div className="flex justify-center mb-5">
               <div className="rounded-2xl overflow-hidden">
-                <Image src="/vault.png" width="250" height="250" alt="cartoon vault" />
+                <Image src="/vault.png" width="450" height="250" alt="cartoon vault" />
               </div>
             </div>
-            <div className="flex gap-8 flex-wrap mb-10">
-              <div className="flex flex-col gap-8 grow justify-center">
-                <div className="flex items-center gap-8 flex-wrap">
-                  <div>
-                    <div className="stats shadow">
-                      <div
-                        className={`stat w-28 ${Number(vault.minimumROI) > 0 ? "bg-green-500/25" : "bg-red-500/25"} `}
-                      >
-                        <div className="stat-title text-white">Min ROI</div>
-                        <div className="stat-value text-white text-xl">{Number(vault.minimumROI) || 0}%</div>
-                      </div>
-                    </div>
+            <div className="">
+              <div className="overflow-x-auto mb-5">
+                <table className="table text-xl bg-base-100">
+                  <thead>
+                    <tr className="text-xl text-white">
+                      <th></th>
+                      <th>Total</th>
+                      <th>Yours</th>
+                      <th>Unit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th>Assets</th>
+                      <td>{Number(formatUnits(vault.totalAssets || 0n, 18)).toFixed(2)}</td>
+                      <td>{Number(formatUnits(vault.maxWithdraw || 0n, 18)).toFixed(2)}</td>
+                      <td>GLD</td>
+                    </tr>
+                    <tr>
+                      <th>Supply</th>
+                      <td>{Number(formatUnits(vault.totalSupply || 0n, 18)).toFixed(2)}</td>
+                      <td>{Number(formatUnits(vault.maxRedeem || 0n, 18)).toFixed(2)}</td>
+                      <td>Shares</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div>
+                {/* Deposit Interface */}
+                <div className="flex items-center mb-5 gap-4">
+                  <div className="mr-3">{vaultDeposit[vault.key].percentage}%</div>
+                  <input
+                    type="range"
+                    min={0}
+                    max="100"
+                    value={vaultDeposit[vault.key].percentage}
+                    onChange={event => handleVaultDepositChange(event, vault.key)}
+                    className="range"
+                  />
+                  <div className="flex justify-center">
+                    <div className="mr-1">{Number(vault.depositAmount).toFixed(2)}</div>GLD
                   </div>
-                  <div>
-                    <div className="stats shadow">
-                      <div className="stat w-40">
-                        <div className="stat-title">Total Assets</div>
-                        <div className="stat-value text-white text-xl">
-                          {formatUnits(vault.totalAssets || 0n, 18)} GLD
-                        </div>
-                      </div>
-                      <div className="stat w-40">
-                        <div className="stat-title">Total Supply</div>
-                        <div className="stat-value text-white text-xl">
-                          {formatUnits(vault.totalSupply || 0n, 18)} Shares
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Deposit Interface */}
-                  <div className="grow">
-                    <div className="flex items-center gap-4">
-                      <div className="mr-3">{vaultDeposit[vault.key].percentage}%</div>
-                      <input
-                        type="range"
-                        min={0}
-                        max="100"
-                        value={vaultDeposit[vault.key].percentage}
-                        onChange={event => handleVaultDepositChange(event, vault.key)}
-                        className="range"
-                      />
-                      <div className="flex justify-center">
-                        <div className="mr-1">{Number(vault.depositAmount).toFixed(2)}</div>GLD
-                      </div>
-                      <button
-                        className="btn btn-accent w-28"
-                        disabled={!((userGoldBalance ?? 0) > 0)}
-                        onClick={async () => {
-                          await vault.approve();
-                          await vault.deposit();
-                          setVaultDeposit(prevState => ({
-                            ...prevState,
-                            [vault.key]: {
-                              percentage: 0,
-                              amount: "0",
-                            },
-                          }));
-                        }}
-                      >
-                        Deposit
-                      </button>
-                    </div>
-                  </div>
+                  <button
+                    className="btn btn-accent w-28"
+                    disabled={!((userGoldBalance ?? 0) > 0)}
+                    onClick={async () => {
+                      await vault.approve();
+                      await vault.deposit();
+                      setVaultDeposit(prevState => ({
+                        ...prevState,
+                        [vault.key]: {
+                          percentage: 0,
+                          amount: "0",
+                        },
+                      }));
+                    }}
+                  >
+                    Deposit
+                  </button>
                 </div>
 
-                <div className="flex items-center gap-8 flex-wrap">
-                  <div>
-                    <div className="stats shadow">
-                      <div className="stat bg-green-500/25 w-28">
-                        <div className="stat-title text-white">Max ROI</div>
-                        <div className="stat-value text-white text-xl">+{Number(vault.maximumROI) || 0}%</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="stats shadow">
-                      <div className="stat w-40">
-                        <div className="stat-title">Your Assets</div>
-                        <div className="stat-value text-white text-xl">
-                          {formatUnits(vault.maxWithdraw || 0n, 18)} GLD
-                        </div>
-                      </div>
-                      <div className="stat w-40">
-                        <div className="stat-title">Your Supply</div>
-                        <div className="stat-value text-white text-xl">
-                          {formatUnits(vault.maxRedeem || 0n, 18)} Shares
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                {/* Withdraw Interface */}
 
-                  {/* Withdraw Interface */}
-                  <div className="grow">
-                    <div className="flex items-center gap-4">
-                      <div className="mr-3">{vaultWithdraw[vault.key].percentage}%</div>
-                      <input
-                        type="range"
-                        min={0}
-                        max="100"
-                        value={vaultWithdraw[vault.key].percentage}
-                        onChange={event => handleVaultWithdrawChange(event, vault.key)}
-                        className="range"
-                      />
-                      <div className="flex justify-center">
-                        <div className="mr-1">{Number(vault.withdrawAmount).toFixed(2)}</div>GLD
-                      </div>
-                      <button
-                        className="btn btn-accent w-28"
-                        disabled={!((vault.maxWithdraw ?? 0) > 0)}
-                        onClick={async () => {
-                          await vault.withdraw();
-                          setVaultWithdraw(prevState => ({
-                            ...prevState,
-                            [vault.key]: {
-                              percentage: 0,
-                              amount: "0",
-                            },
-                          }));
-                        }}
-                      >
-                        Withdraw
-                      </button>
-                    </div>
+                <div className="flex items-center gap-4">
+                  <div className="mr-3">{vaultWithdraw[vault.key].percentage}%</div>
+                  <input
+                    type="range"
+                    min={0}
+                    max="100"
+                    value={vaultWithdraw[vault.key].percentage}
+                    onChange={event => handleVaultWithdrawChange(event, vault.key)}
+                    className="range"
+                  />
+                  <div className="flex justify-center">
+                    <div className="mr-1">{Number(vault.withdrawAmount).toFixed(2)}</div>GLD
                   </div>
+                  <button
+                    className="btn btn-accent w-28"
+                    disabled={!((vault.maxWithdraw ?? 0) > 0)}
+                    onClick={async () => {
+                      await vault.withdraw();
+                      setVaultWithdraw(prevState => ({
+                        ...prevState,
+                        [vault.key]: {
+                          percentage: 0,
+                          amount: "0",
+                        },
+                      }));
+                    }}
+                  >
+                    Withdraw
+                  </button>
                 </div>
               </div>
             </div>

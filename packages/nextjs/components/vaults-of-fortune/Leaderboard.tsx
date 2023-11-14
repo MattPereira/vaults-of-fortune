@@ -9,7 +9,7 @@ export const Leaderboard = () => {
   });
 
   return (
-    <div className="px-5">
+    <div>
       <h3 className="text-center text-3xl mb-5 font-cubano">Leaderboard</h3>
       <div className="overflow-x-auto">
         <table className="table text-xl">
@@ -18,7 +18,7 @@ export const Leaderboard = () => {
             <tr className="text-xl">
               <th>Pos</th>
               <th>Player</th>
-              <th>Gold</th>
+              <th>Total</th>
             </tr>
           </thead>
           <tbody>

@@ -2577,7 +2577,7 @@ const deployedContracts = {
   },
   80001: {
     GoldToken: {
-      address: "0xB38457fe68620798fE11B193C8788e09C723b74f",
+      address: "0x88C0c2757e538BCdA32309b8AF07f2C59194C09B",
       abi: [
         {
           inputs: [],
@@ -2857,7 +2857,7 @@ const deployedContracts = {
       ],
     },
     HighRiskVault: {
-      address: "0xb9653aB712E017348D6A07d1B24F1455A902b4c4",
+      address: "0xBD8476B1AE7Dcf76eb557156e280D905aDa4d457",
       abi: [
         {
           inputs: [
@@ -3624,7 +3624,7 @@ const deployedContracts = {
       ],
     },
     LowRiskVault: {
-      address: "0xbFB2420De5f0E21A75f69fC7664FBB5f6B334837",
+      address: "0x4502a107D3325107bEB243516AC00f4D0f8B6694",
       abi: [
         {
           inputs: [
@@ -4391,7 +4391,7 @@ const deployedContracts = {
       ],
     },
     Market: {
-      address: "0x6689CDb613f0Ca7Bdb5973Cad19919eC141cf95C",
+      address: "0xD22E11B44174a50Ca86b7199Bd99FEa532eA6879",
       abi: [
         {
           inputs: [
@@ -4489,8 +4489,21 @@ const deployedContracts = {
           inputs: [
             {
               indexed: true,
+              internalType: "uint256",
+              name: "roundNumber",
+              type: "uint256",
+            },
+          ],
+          name: "RoundOpen",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
               internalType: "address",
-              name: "player",
+              name: "vaultAddress",
               type: "address",
             },
             {
@@ -4501,25 +4514,18 @@ const deployedContracts = {
             },
             {
               indexed: true,
-              internalType: "uint256",
-              name: "score",
-              type: "uint256",
+              internalType: "int256",
+              name: "roi",
+              type: "int256",
             },
-          ],
-          name: "PlayerScore",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
             {
-              indexed: true,
+              indexed: false,
               internalType: "uint256",
-              name: "roundNumber",
+              name: "amount",
               type: "uint256",
             },
           ],
-          name: "RoundOpen",
+          name: "VaultROI",
           type: "event",
         },
         {
@@ -4828,6 +4834,13 @@ const deployedContracts = {
         },
         {
           inputs: [],
+          name: "resetContest",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
           name: "roundInterval",
           outputs: [
             {
@@ -4894,7 +4907,7 @@ const deployedContracts = {
       ],
     },
     MediumRiskVault: {
-      address: "0x2AdF38A9C380167eE52dD385886dC66f1ee64E2a",
+      address: "0x093DE2D6EDDEaB909AE0dC345D018a46acD72c56",
       abi: [
         {
           inputs: [
