@@ -55,18 +55,18 @@ export const Round = () => {
 
   return (
     <>
-      <h3 className="text-center text-2xl font-cubano">Round</h3>
-      <div className="flex justify-around">
-        <div className="text-center">
+      <h3 className="text-center text-3xl font-cubano mb-5">Round</h3>
+      <div className="flex justify-between">
+        <div className="text-center w-[140px]">
           <h5 className="text-xl">Number</h5>
-          <div className="text-5xl text-white">{roundNumber?.toString()}</div>
+          <div className="text-5xl text-white">{roundNumber?.toString()} of 3</div>
         </div>
-        <div className="text-center">
+        <div className="text-center w-[140px]">
           <h5 className="text-xl">State</h5>
           {roundState && <div className="text-5xl text-white">{roundStateToName[roundState]}</div>}
         </div>
         <div>
-          <h5 className="text-xl">Timer</h5>
+          <h5 className="text-xl text-center w-[140px]">Clock</h5>
           <div className="flex justify-center">
             <span className="countdown font-mono text-5xl ">
               <span style={{ "--value": countdown } as React.CSSProperties}></span>

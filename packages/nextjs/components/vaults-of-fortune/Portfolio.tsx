@@ -107,17 +107,22 @@ export const Portfolio = () => {
     <>
       {isPlayer ? (
         <>
-          <h3 className="text-white text-center font-cubano text-2xl">Your Portfolio</h3>
+          <h3 className="text-white text-center font-cubano text-3xl mb-5">Portfolio</h3>
 
-          <div className="flex justify-center my-5">
-            <div className="w-[350px] h-[350px]">
+          <div className="flex justify-center">
+            <div className="w-[300px] h-[300px]">
               <Doughnut data={data} />
             </div>
           </div>
         </>
       ) : (
         <div className="text-center mb-10">
-          <button className="btn bg-yellow-400 text-secondary" onClick={() => enterContest()}>
+          <p className="text-xl">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus, nobis est, recusandae molestiae eos aliquid
+            illum minima, fuga nostrum aliquam architecto facilis ratione quisquam delectus. Non excepturi unde quo
+            illo.
+          </p>
+          <button className="btn bg-yellow-400 hover:bg-yellow-500 text-secondary" onClick={() => enterContest()}>
             Enter Contest
           </button>
         </div>

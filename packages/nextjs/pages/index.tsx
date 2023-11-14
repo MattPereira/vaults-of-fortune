@@ -7,10 +7,9 @@ const Home: NextPage = () => {
     <>
       <MetaHeader />
 
-      <div className="bg-base-300">
-        <h1 className="text-6xl text-center font-cubano my-10">Vaults Of Fortune</h1>
-
-        <div className="rounded-xl grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
+      <div className="bg-base-300 py-10">
+        {/* <h1 className="text-6xl text-center font-cubano my-10">Vaults Of Fortune</h1> */}
+        <div className="rounded-xl grid grid-cols-1 xl:grid-cols-3 gap-8">
           <div>
             <Leaderboard />
           </div>
@@ -23,8 +22,8 @@ const Home: NextPage = () => {
         </div>
       </div>
 
-      <div className="p-10">
-        <div className="grid grid-cols-1 gap-8">
+      <div className="p-5 xl:p-10">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-14">
           <Vaults />
         </div>
       </div>

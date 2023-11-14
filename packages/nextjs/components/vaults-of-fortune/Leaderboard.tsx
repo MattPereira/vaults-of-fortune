@@ -10,7 +10,7 @@ export const Leaderboard = () => {
 
   return (
     <div className="px-5">
-      <h3 className="text-center text-2xl font-cubano">Leaderboard</h3>
+      <h3 className="text-center text-3xl mb-5 font-cubano">Leaderboard</h3>
       <div className="overflow-x-auto">
         <table className="table text-xl">
           {/* head */}
@@ -45,7 +45,6 @@ interface ITotalGold {
 }
 
 const TotalGold: React.FC<ITotalGold> = ({ address }) => {
-  console.log("address", address);
   const { data: lowRiskAssets } = useScaffoldContractRead({
     contractName: "LowRiskVault",
     functionName: "maxWithdraw",

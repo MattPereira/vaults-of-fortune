@@ -100,13 +100,13 @@ export const Vaults = () => {
       {vaults.map(vault => {
         return (
           <div key={vault.title}>
-            <h2 className="mb-5 text-4xl font-cubano">{vault.title}</h2>
-            <div className="flex gap-8 flex-wrap mb-10">
-              <div>
-                <div className="rounded-2xl overflow-hidden">
-                  <Image src="/vault.png" width="250" height="250" alt="cartoon vault" />
-                </div>
+            <h2 className="mb-5 text-4xl font-cubano text-center">{vault.title}</h2>
+            <div className="flex justify-center mb-5">
+              <div className="rounded-2xl overflow-hidden">
+                <Image src="/vault.png" width="250" height="250" alt="cartoon vault" />
               </div>
+            </div>
+            <div className="flex gap-8 flex-wrap mb-10">
               <div className="flex flex-col gap-8 grow justify-center">
                 <div className="flex items-center gap-8 flex-wrap">
                   <div>
