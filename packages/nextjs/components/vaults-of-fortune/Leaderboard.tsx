@@ -13,7 +13,6 @@ export const Leaderboard = () => {
       <h3 className="text-center text-3xl mb-5 font-cubano">Leaderboard</h3>
       <div className="overflow-x-auto">
         <table className="table text-xl">
-          {/* head */}
           <thead>
             <tr className="text-xl">
               <th>Pos</th>

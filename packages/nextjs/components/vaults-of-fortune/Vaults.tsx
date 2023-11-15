@@ -99,18 +99,18 @@ export const Vaults = () => {
     <>
       {vaults.map(vault => {
         return (
-          <div key={vault.title}>
+          <div key={vault.title} className="3xl:px-5">
             <h2 className="mb-3 text-3xl font-cubano text-center">{vault.title}</h2>
             <h6 className="text-center text-xl mb-3 ">
-              {Number(vault.minimumROI) || 0} to {Number(vault.maximumROI) || 0}% ROI
+              {Number(vault.minimumROI) || 0} to {Number(vault.maximumROI) || 0}%
             </h6>
             <div className="flex justify-center mb-5">
               <div className="rounded-2xl overflow-hidden">
-                <Image src="/vault.png" width="450" height="250" alt="cartoon vault" />
+                <Image src="/vault.png" width="300" height="300" alt="cartoon vault" />
               </div>
             </div>
             <div className="">
-              <div className="overflow-x-auto mb-5">
+              <div className="overflow-x-auto mb-7">
                 <table className="table text-xl bg-base-100">
                   <thead>
                     <tr className="text-xl text-white">

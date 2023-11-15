@@ -45,6 +45,9 @@ const deployMarket: DeployFunction = async function (hre: HardhatRuntimeEnvironm
 
   // 3. Send all the gold to the market
   await goldToken.transfer(market.address, await goldToken.balanceOf(deployer));
+
+  // 4. add market contract to VRF subscription
+  // const vrfCoordinator = await hre.ethers.getContractAt("VRFCoordinator", vrfCoordinatorAddress);
 };
 
 export default deployMarket;

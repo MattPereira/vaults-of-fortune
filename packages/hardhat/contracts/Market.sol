@@ -38,7 +38,12 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		uint256 number;
 	}
 
+	struct Contest {
+		uint256 number;
+	}
+
 	Round public currentRound;
+	Contest public currentContest;
 	IERC20 public token;
 	IVault public lowRiskVault;
 	IVault public mediumRiskVault;
@@ -58,11 +63,12 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 
 	// EVENTS
 	event RoundOpen(uint256 indexed roundNumber);
-	event VaultROI(
-		address indexed vaultAddress,
-		uint256 indexed roundNumber,
-		int256 indexed roi,
-		uint256 amount
+	event RoundResults(
+		uint256 contestNumber,
+		uint256 roundNumber,
+		int256 indexed lowRiskVaultROI,
+		int256 indexed mediumRiskVaultROI,
+		int256 indexed highRiskVaultROI
 	);
 
 	constructor(
@@ -84,6 +90,7 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		// prevents upkeep from triggering
 		currentRound.state = RoundState.CLOSED;
 		currentRound.number = 1;
+		currentContest.number = 1;
 		// VRF requirements
 		vrfCoordinator = VRFCoordinatorV2Interface(_vrfCoordinator);
 		keyHash = _keyHash;
@@ -94,9 +101,6 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 
 	/** Handles contest entry
 	 * @notice msg.sender must have 0 GLD tokens to enter
-	 * @notice sends 10,000 GLD tokens to the msg.sender
-	 * @notice resets the countdown interval to give contestants time to allocate tokens
-	 * @notice flips the round state to OPEN if the round is CLOSED (i.e. first contestant)
 	 */
 
 	function enterContest() external {
@@ -105,24 +109,28 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 			"Please return your GLD tokens to market contract before entering a new contest"
 		);
 
-		require(currentRound.number == 1, "Contest is already in progress");
-		if (
-			currentRound.state == RoundState.CLOSED && currentRound.number == 1
-		) {
-			currentRound.state = RoundState.OPEN;
-		}
-
 		players.push(msg.sender);
 		token.transfer(msg.sender, STARTING_AMOUNT);
+	}
+
+	/** Handles starting round which allows for upkeep to be triggered
+	 */
+
+	function startRound() external onlyOwner {
+		currentRound.state = RoundState.OPEN;
 		lastTimestamp = block.timestamp;
 		emit RoundOpen(currentRound.number); // listening for this event to reset countdown timer on frontend
 	}
 
-	/** Clears players array to allow for a new contest to begin
-	 *
+	/** Handles reseting state so a new contest can begin
+	 * 1. clear players array to allow for a new contest to begin
+	 * 2. reset the currentRound to 1
+	 * 3. send GLD from vaults to market contract
 	 */
 
 	function resetContest() external onlyOwner {
+		// increment contest number
+		currentContest.number += 1;
 		// reset the round
 		currentRound.number = 1;
 		currentRound.state = RoundState.CLOSED;
@@ -194,53 +202,50 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		uint256 /* requestId */,
 		uint256[] memory randomWords
 	) internal override {
-		manageVault(lowRiskVault, randomWords[0]);
-		manageVault(mediumRiskVault, randomWords[1]);
-		manageVault(highRiskVault, randomWords[2]);
+		int256 lowVaultROI = manageVault(lowRiskVault, randomWords[0]);
+		int256 mediumVaultROI = manageVault(mediumRiskVault, randomWords[1]);
+		int256 highVaultROI = manageVault(highRiskVault, randomWords[2]);
+
+		emit RoundResults(
+			currentContest.number,
+			currentRound.number,
+			lowVaultROI,
+			mediumVaultROI,
+			highVaultROI
+		);
 
 		if (currentRound.number < 3) {
-			// increment round and open it so upkeep can be triggered again
 			currentRound.number += 1;
-			currentRound.state = RoundState.OPEN;
-			emit RoundOpen(currentRound.number); // listening for this event to reset countdown timer on frontend
-		} else {
-			currentRound.state = RoundState.CLOSED;
 		}
 
-		lastTimestamp = block.timestamp;
+		currentRound.state = RoundState.CLOSED;
 	}
 
 	/** Uses random value to distribute/take tokens to/from the vaults
-	 *
 	 * @param vault low, medium, or high risk
 	 * @param randomNumber from VRF
 	 *
 	 * @notice comments inside function are example values for medium risk vault
 	 */
 
-	function manageVault(IVault vault, uint256 randomNumber) public {
+	function manageVault(
+		IVault vault,
+		uint256 randomNumber
+	) public returns (int256) {
 		uint256 spread = calculateSpread(vault.MAX_ROI(), vault.MIN_ROI()); // 100
-
 		uint256 normalizedRandomNumber = randomNumber % (spread + 1); // 0 to 100
+		int256 roiPercentage = int256(normalizedRandomNumber) + vault.MIN_ROI(); // -50 to 50
 
-		int256 returnPercentage = int256(normalizedRandomNumber) +
-			vault.MIN_ROI(); // -50 to 50
+		uint256 assetChangeAmount = (vault.totalAssets() * abs(roiPercentage)) /
+			100;
 
-		uint256 assetChangeAmount = (vault.totalAssets() *
-			abs(returnPercentage)) / 100;
-
-		if (returnPercentage < 0) {
+		if (roiPercentage < 0) {
 			vault.simulateLoss(assetChangeAmount);
 		} else {
 			token.transfer(address(vault), uint256(assetChangeAmount));
 		}
 
-		emit VaultROI(
-			address(vault),
-			currentRound.number,
-			returnPercentage,
-			assetChangeAmount
-		);
+		return roiPercentage;
 	}
 
 	/** Helper function to get absolute value of int256
