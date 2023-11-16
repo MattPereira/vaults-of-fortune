@@ -3,7 +3,7 @@ import Image from "next/image";
 import { formatEther, formatUnits } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
-import { IVaultManager, useVaultManager } from "~~/hooks/useVaults";
+import { IVaultManager, useVaultManager } from "~~/hooks/useVaultManager";
 
 /** Component to render the vaults
  *
@@ -123,14 +123,14 @@ export const Vaults = () => {
                   <tbody>
                     <tr>
                       <th>Assets</th>
-                      <td>{Number(formatUnits(vault.totalAssets || 0n, 18)).toFixed(2)}</td>
-                      <td>{Number(formatUnits(vault.maxWithdraw || 0n, 18)).toFixed(2)}</td>
+                      <td>{Number(formatUnits(vault.totalAssets || 0n, 18)).toFixed(1)}</td>
+                      <td>{Number(formatUnits(vault.maxWithdraw || 0n, 18)).toFixed(1)}</td>
                       <td>GLD</td>
                     </tr>
                     <tr>
                       <th>Supply</th>
-                      <td>{Number(formatUnits(vault.totalSupply || 0n, 18)).toFixed(2)}</td>
-                      <td>{Number(formatUnits(vault.maxRedeem || 0n, 18)).toFixed(2)}</td>
+                      <td>{Number(formatUnits(vault.totalSupply || 0n, 18)).toFixed(1)}</td>
+                      <td>{Number(formatUnits(vault.maxRedeem || 0n, 18)).toFixed(1)}</td>
                       <td>Shares</td>
                     </tr>
                   </tbody>

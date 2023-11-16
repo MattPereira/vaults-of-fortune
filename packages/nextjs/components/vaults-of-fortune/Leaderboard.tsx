@@ -1,13 +1,18 @@
-import { formatEther } from "viem";
+// import { useEffect, useState } from "react";
 import { Address } from "~~/components/scaffold-eth";
+import { useFetchTotalGold } from "~~/hooks/";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
+
+// interface IPlayerData {
+//   address: string;
+//   totalGold: number;
+// }
 
 export const Leaderboard = () => {
   const { data: players } = useScaffoldContractRead({
     contractName: "Market",
     functionName: "getPlayers",
   });
-
   return (
     <div>
       <h3 className="text-center text-3xl mb-5 font-cubano">Leaderboard</h3>
@@ -21,17 +26,19 @@ export const Leaderboard = () => {
             </tr>
           </thead>
           <tbody>
-            {players?.map((address, idx) => (
-              <tr key={address}>
-                <th>{idx + 1}</th>
-                <td>
-                  <Address size="lg" address={address} />
-                </td>
-                <td>
-                  <TotalGold address={address} />
-                </td>
-              </tr>
-            ))}
+            {players?.map(player => {
+              return (
+                <tr key={player}>
+                  <th> 1</th>
+                  <td>
+                    <Address size="lg" address={player} />
+                  </td>
+                  <td>
+                    <TotalGoldBalance address={player} />{" "}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -39,36 +46,7 @@ export const Leaderboard = () => {
   );
 };
 
-interface ITotalGold {
-  address: string;
+function TotalGoldBalance({ address }: { address: string }) {
+  const totalGold = useFetchTotalGold(address);
+  return <>{totalGold}</>;
 }
-
-const TotalGold: React.FC<ITotalGold> = ({ address }) => {
-  const { data: lowRiskAssets } = useScaffoldContractRead({
-    contractName: "LowRiskVault",
-    functionName: "maxWithdraw",
-    args: [address],
-  });
-
-  const { data: mediumRiskAssets } = useScaffoldContractRead({
-    contractName: "MediumRiskVault",
-    functionName: "maxWithdraw",
-    args: [address],
-  });
-
-  const { data: highRiskAssets } = useScaffoldContractRead({
-    contractName: "HighRiskVault",
-    functionName: "maxWithdraw",
-    args: [address],
-  });
-
-  const { data: goldReserves } = useScaffoldContractRead({
-    contractName: "GoldToken",
-    functionName: "balanceOf",
-    args: [address],
-  });
-
-  const rawTotal = (lowRiskAssets || 0n) + (mediumRiskAssets || 0n) + (highRiskAssets || 0n) + (goldReserves || 0n);
-  const formattedTotal = +formatEther(rawTotal);
-  return <>{formattedTotal}</>;
-};

@@ -156,6 +156,14 @@ const RoiTable = () => {
     }
   }, [roundResults.length, events, isLoadingEvents]);
 
+  const roiColor = (roi: number) => {
+    if (roi > 0) {
+      return "text-green-400";
+    } else if (roi < 0) {
+      return "text-red-400";
+    }
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="table text-xl">
@@ -171,9 +179,9 @@ const RoiTable = () => {
           {roundResults.map(result => (
             <tr key={result.roundNumber}>
               <th>{result.roundNumber}</th>
-              <td>{result.lowRiskVaultROI}%</td>
-              <td>{result.mediumRiskVaultROI}%</td>
-              <td>{result.highRiskVaultROI}%</td>
+              <td className={roiColor(result.lowRiskVaultROI)}>{result.lowRiskVaultROI}%</td>
+              <td className={roiColor(result.mediumRiskVaultROI)}>{result.mediumRiskVaultROI}%</td>
+              <td className={roiColor(result.highRiskVaultROI)}>{result.highRiskVaultROI}%</td>
             </tr>
           ))}
         </tbody>
