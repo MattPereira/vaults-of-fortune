@@ -57,7 +57,7 @@ export const Round = () => {
     <>
       <div className="mb-5">
         <h3 className="text-center text-3xl font-cubano mb-5">Round</h3>
-        <div className="stats shadow w-full">
+        <div className="stats shadow w-full bg-base-200">
           <div className="stat place-items-center">
             <div className="stat-title">Number</div>
             <div className="stat-value text-4xl">{roundNumber?.toString()} of 3</div>
@@ -101,26 +101,26 @@ type RoundResultsData = {
 const RoiTable = () => {
   const [roundResults, setRoundResults] = useState<RoundResultsData[]>([]);
 
-  // const { data: currentContest } = useScaffoldContractRead({
-  //   contractName: "Market",
-  //   functionName: "currentContest",
-  // });
+  const { data: currentContest } = useScaffoldContractRead({
+    contractName: "Market",
+    functionName: "currentContest",
+  });
 
   const { data: events, isLoading: isLoadingEvents } = useScaffoldEventHistory({
     contractName: "Market",
-    eventName: "RoundResults",
+    eventName: "RoundROIResults",
     // Specify the starting block number from which to read events, this is a bigint.
     fromBlock: 0n,
     blockData: true,
     // Apply filters to the event based on parameter names and values { [parameterName]: value },
-    // filters: { contestNumber: currentContest },
+    filters: { contestNumber: currentContest },
     transactionData: true,
     receiptData: true,
   });
 
   useScaffoldEventSubscriber({
     contractName: "Market",
-    eventName: "RoundResults",
+    eventName: "RoundROIResults",
     listener: logs => {
       logs.map(log => {
         const { contestNumber, roundNumber, lowRiskVaultROI, mediumRiskVaultROI, highRiskVaultROI } = log.args;
@@ -142,17 +142,19 @@ const RoiTable = () => {
 
   useEffect(() => {
     if (!roundResults?.length && !!events?.length && !isLoadingEvents) {
-      setRoundResults(
-        events.map(({ args }) => {
-          return {
-            contestNumber: Number(args.contestNumber),
-            roundNumber: Number(args.roundNumber),
-            lowRiskVaultROI: Number(args.lowRiskVaultROI),
-            mediumRiskVaultROI: Number(args.mediumRiskVaultROI),
-            highRiskVaultROI: Number(args.highRiskVaultROI),
-          };
-        }),
-      );
+      const unsortedRoundResults = events.map(({ args }) => {
+        return {
+          contestNumber: Number(args.contestNumber),
+          roundNumber: Number(args.roundNumber),
+          lowRiskVaultROI: Number(args.lowRiskVaultROI),
+          mediumRiskVaultROI: Number(args.mediumRiskVaultROI),
+          highRiskVaultROI: Number(args.highRiskVaultROI),
+        };
+      });
+
+      const sortedRoundResults = unsortedRoundResults.sort((a, b) => a.roundNumber - b.roundNumber);
+
+      setRoundResults(sortedRoundResults);
     }
   }, [roundResults.length, events, isLoadingEvents]);
 

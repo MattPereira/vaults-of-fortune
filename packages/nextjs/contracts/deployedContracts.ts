@@ -2577,7 +2577,7 @@ const deployedContracts = {
   },
   80001: {
     GoldToken: {
-      address: "0x76cC391e46D898C91aD92a5ebbdcaebd0b61A252",
+      address: "0x77fDA92C47033Ba75Be3AA161f23f90e56743e09",
       abi: [
         {
           inputs: [],
@@ -2857,7 +2857,7 @@ const deployedContracts = {
       ],
     },
     HighRiskVault: {
-      address: "0x0718B616974A4CFE5BDB3F63FDd1705dB8b985d3",
+      address: "0x9f047de73288912dF4e18cfA7A3C0a58443D814D",
       abi: [
         {
           inputs: [
@@ -3624,7 +3624,7 @@ const deployedContracts = {
       ],
     },
     LowRiskVault: {
-      address: "0x028ac17198E5be21102DcD886bEFD852d2a1Cd48",
+      address: "0x23Df6c571004d11962d86f136F5947B5FfEbFBa1",
       abi: [
         {
           inputs: [
@@ -4391,7 +4391,7 @@ const deployedContracts = {
       ],
     },
     Market: {
-      address: "0x9d7018C4Bc0f8f5070CC4259D6E527dCD9AFbb96",
+      address: "0x484cC9b86Ca0eef77dCcDf20041A69A5Df601040",
       abi: [
         {
           inputs: [
@@ -4490,6 +4490,37 @@ const deployedContracts = {
             {
               indexed: true,
               internalType: "uint256",
+              name: "contestNumber",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "roundNumber",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "player",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "totalAssets",
+              type: "uint256",
+            },
+          ],
+          name: "PlayerTotalAssetUpdate",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
               name: "roundNumber",
               type: "uint256",
             },
@@ -4501,37 +4532,37 @@ const deployedContracts = {
           anonymous: false,
           inputs: [
             {
-              indexed: false,
+              indexed: true,
               internalType: "uint256",
               name: "contestNumber",
               type: "uint256",
             },
             {
-              indexed: false,
+              indexed: true,
               internalType: "uint256",
               name: "roundNumber",
               type: "uint256",
             },
             {
-              indexed: true,
+              indexed: false,
               internalType: "int256",
               name: "lowRiskVaultROI",
               type: "int256",
             },
             {
-              indexed: true,
+              indexed: false,
               internalType: "int256",
               name: "mediumRiskVaultROI",
               type: "int256",
             },
             {
-              indexed: true,
+              indexed: false,
               internalType: "int256",
               name: "highRiskVaultROI",
               type: "int256",
             },
           ],
-          name: "RoundResults",
+          name: "RoundROIResults",
           type: "event",
         },
         {
@@ -4545,13 +4576,6 @@ const deployedContracts = {
             },
           ],
           stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "addToSubscription",
-          outputs: [],
-          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -4959,7 +4983,7 @@ const deployedContracts = {
       ],
     },
     MediumRiskVault: {
-      address: "0xCeef3c768Eb88e440090a0505AC8AFc013bcAed7",
+      address: "0x06B49Bfa70Dc76fBaAEd04f5579e2b9a6Ba1019F",
       abi: [
         {
           inputs: [

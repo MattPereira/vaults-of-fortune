@@ -36,7 +36,7 @@ const Home: NextPage = () => {
 
   useScaffoldEventSubscriber({
     contractName: "Market",
-    eventName: "RoundResults",
+    eventName: "RoundROIResults",
     listener: logs => {
       logs.map(log => {
         const { contestNumber, roundNumber, lowRiskVaultROI, mediumRiskVaultROI, highRiskVaultROI } = log.args;
@@ -58,8 +58,7 @@ const Home: NextPage = () => {
     <>
       <MetaHeader />
 
-      <div className="bg-base-300 py-14 min-h-[468px] px-5 xl:px-10">
-        {/* <h1 className="text-6xl text-center font-cubano my-10">Vaults Of Fortune</h1> */}
+      <div className="bg-base-300 py-14 min-h-[468px] px-5 xl:px-14">
         <div className="rounded-xl grid grid-cols-1 2xl:grid-cols-3 gap-14">
           <div>
             <Leaderboard />
@@ -72,7 +71,7 @@ const Home: NextPage = () => {
           </div>
         </div>
       </div>
-      <div className="p-5 xl:p-10">
+      <div className="p-5 xl:p-14">
         <div className="grid grid-cols-1 2xl:grid-cols-3 gap-14">
           <Vaults />
         </div>
@@ -94,12 +93,32 @@ const Home: NextPage = () => {
 
       {isRoundEnd && (
         <div className="modal modal-open">
-          <div className="modal-box">
+          <div className="modal-box p-5">
             <h3 className="font-cubano text-3xl text-center mb-5">End of Round {roundResults.roundNumber}</h3>
-            <p className="text-center text-xl">The Low Risk Vault returned {roundResults.lowRiskVaultROI}%</p>
-            <p className="text-center text-xl">The Medium Risk Vault returned {roundResults.mediumRiskVaultROI}%</p>
-            <p className="text-center text-xl">The High Risk Vault returned {roundResults.highRiskVaultROI}%</p>
-
+            <div className="overflow-x-auto">
+              <table className="table text-xl bg-base-300">
+                <thead>
+                  <tr className="text-xl">
+                    <th>Vault</th>
+                    <th>ROI</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>Low Risk</th>
+                    <td>{roundResults.lowRiskVaultROI}%</td>
+                  </tr>
+                  <tr>
+                    <th>Medium Risk</th>
+                    <td>{roundResults.mediumRiskVaultROI}%</td>
+                  </tr>
+                  <tr>
+                    <th>High Risk</th>
+                    <td>{roundResults.highRiskVaultROI}%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <div className="modal-action">
               <button className="btn" onClick={() => setIsRoundEnd(false)}>
                 Close

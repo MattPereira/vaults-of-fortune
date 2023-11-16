@@ -63,12 +63,18 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 
 	// EVENTS
 	event RoundOpen(uint256 indexed roundNumber);
-	event RoundResults(
-		uint256 contestNumber,
-		uint256 roundNumber,
-		int256 indexed lowRiskVaultROI,
-		int256 indexed mediumRiskVaultROI,
-		int256 indexed highRiskVaultROI
+	event RoundROIResults(
+		uint256 indexed contestNumber,
+		uint256 indexed roundNumber,
+		int256 lowRiskVaultROI,
+		int256 mediumRiskVaultROI,
+		int256 highRiskVaultROI
+	);
+	event PlayerTotalAssetUpdate(
+		uint256 indexed contestNumber,
+		uint256 indexed roundNumber,
+		address indexed player,
+		uint256 totalAssets
 	);
 
 	constructor(
@@ -107,6 +113,13 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		require(
 			token.balanceOf(msg.sender) == 0,
 			"Please return your GLD tokens to market contract before entering a new contest"
+		);
+
+		emit PlayerTotalAssetUpdate(
+			currentContest.number,
+			currentRound.number,
+			msg.sender,
+			STARTING_AMOUNT
 		);
 
 		players.push(msg.sender);
@@ -206,13 +219,28 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		int256 mediumVaultROI = manageVault(mediumRiskVault, randomWords[1]);
 		int256 highVaultROI = manageVault(highRiskVault, randomWords[2]);
 
-		emit RoundResults(
+		emit RoundROIResults(
 			currentContest.number,
 			currentRound.number,
 			lowVaultROI,
 			mediumVaultROI,
 			highVaultROI
 		);
+
+		// emit event with each players updated total assets
+		for (uint i = 0; i < players.length; i++) {
+			address player = players[i];
+			uint256 totalAssets = lowRiskVault.maxWithdraw(player) +
+				mediumRiskVault.maxWithdraw(player) +
+				highRiskVault.maxWithdraw(player) +
+				token.balanceOf(player);
+			emit PlayerTotalAssetUpdate(
+				currentContest.number,
+				currentRound.number,
+				player,
+				totalAssets
+			);
+		}
 
 		if (currentRound.number < 3) {
 			currentRound.number += 1;
