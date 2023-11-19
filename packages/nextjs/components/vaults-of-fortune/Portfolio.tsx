@@ -7,6 +7,13 @@ import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaf
 
 ChartJS.register(ArcElement, Tooltip);
 
+// const roundState = {
+//   0: "Open",
+//   1: "Closing",
+//   2: "Calculating",
+//   3: "Closed",
+// };
+
 export const Portfolio = () => {
   const [isPlayer, setIsPlayer] = useState(false);
   const account = useAccount();
@@ -31,7 +38,16 @@ export const Portfolio = () => {
     functionName: "enterContest",
   });
 
-  const { data: goldBalance } = useScaffoldContractRead({
+  const {
+    writeAsync: startCountdown,
+    // isLoading,
+    // isMining,
+  } = useScaffoldContractWrite({
+    contractName: "Market",
+    functionName: "startCountdown",
+  });
+
+  const { data: userGoldBalance } = useScaffoldContractRead({
     contractName: "GoldToken",
     functionName: "balanceOf",
     args: [account.address],
@@ -55,10 +71,17 @@ export const Portfolio = () => {
     args: [account.address],
   });
 
+  const { data: currentRoundState } = useScaffoldContractRead({
+    contractName: "Market",
+    functionName: "getCurrentRoundState",
+  });
+
+  console.log("currentRoundState", currentRoundState);
+
   const formattedLowRisk = +formatEther(lowRiskAssets || 0n);
   const formattedMediumRisk = +formatEther(mediumRiskAssets || 0n);
   const formattedHighRisk = +formatEther(highRiskAssets || 0n);
-  const formattedGoldBalance = +formatEther(goldBalance || 0n);
+  const formattedGoldBalance = +formatEther(userGoldBalance || 0n);
 
   const totalAssets = formattedLowRisk + formattedMediumRisk + formattedHighRisk + formattedGoldBalance;
 
@@ -101,26 +124,26 @@ export const Portfolio = () => {
     <>
       {isPlayer ? (
         <>
-          <h3 className="text-white text-center font-cubano text-3xl mb-5">Portfolio</h3>
+          <h3 className="text-white text-center font-cubano text-3xl xl:text-4xl mb-5">Portfolio</h3>
 
           <div className="flex justify-center">
-            <div className="w-[350px] h-[350px] relative">
+            <div className="w-[300px] h-[300px] relative">
               <Doughnut data={data} />
-              <button
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  zIndex: 10,
-                }}
-                className="btn btn-accent px-5 h-28 w-28 text-xl capitalize"
-                onClick={() => {
-                  /* your click handler here */
-                }}
-              >
-                Ready
-              </button>
+              {currentRoundState === 0 && userGoldBalance === 0n && (
+                <button
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    zIndex: 10,
+                  }}
+                  className="btn btn-accent px-5 h-24 w-24 text-xl capitalize"
+                  onClick={() => startCountdown()}
+                >
+                  Ready
+                </button>
+              )}
             </div>
           </div>
         </>

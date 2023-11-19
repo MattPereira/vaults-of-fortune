@@ -71,8 +71,8 @@ const Home: NextPage = () => {
           </div>
         </div>
       </div>
-      <div className="p-5 xl:p-14">
-        <div className="grid grid-cols-1 2xl:grid-cols-3 gap-14">
+      <div className="p-5 xl:p-14 bg-base-300">
+        <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-14">
           <Vaults />
         </div>
       </div>

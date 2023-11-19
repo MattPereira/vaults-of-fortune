@@ -67,7 +67,7 @@ export const Leaderboard = () => {
 
   return (
     <div>
-      <h3 className="text-center text-3xl mb-5 font-cubano">Leaderboard</h3>
+      <h3 className="text-center text-3xl xl:text-4xl mb-5 font-cubano">Leaderboard</h3>
       <div className="overflow-x-auto">
         <table className="table text-xl">
           <thead>

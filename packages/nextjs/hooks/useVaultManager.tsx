@@ -8,6 +8,7 @@ export interface IVaultManager {
   totalSupply: bigint | undefined;
   maxWithdraw: bigint | undefined;
   maxRedeem: bigint | undefined;
+  userGoldAllowance: bigint | undefined;
   depositAmount: string;
   approve: () => Promise<void>;
   deposit: () => Promise<void>;
@@ -68,10 +69,17 @@ export function useVaultManager(
     args: [account.address],
   });
 
+  const { data: userGoldAllowance } = useScaffoldContractRead({
+    contractName: "GoldToken",
+    functionName: "allowance",
+    args: [account.address, vaultContract?.address],
+  });
+
+  // approving the MaxUint256 for convenience of gameplay
   const { writeAsync: approve } = useScaffoldContractWrite({
     contractName: "GoldToken",
     functionName: "approve",
-    args: [vaultContract?.address, parseUnits(depositAmount, 18)],
+    args: [vaultContract?.address, BigInt(2) ** BigInt(256) - BigInt(1)],
   });
 
   const { writeAsync: deposit } = useScaffoldContractWrite({
@@ -92,6 +100,7 @@ export function useVaultManager(
     totalSupply,
     maxWithdraw,
     maxRedeem,
+    userGoldAllowance,
     approve,
     deposit,
     depositAmount,

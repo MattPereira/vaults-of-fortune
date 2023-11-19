@@ -48,7 +48,7 @@ export const Round = () => {
   return (
     <>
       <div className="mb-5">
-        <h3 className="text-center text-3xl font-cubano mb-5">Round</h3>
+        <h3 className="text-center text-3xl xl:text-4xl font-cubano mb-5">Round</h3>
         <div className="stats shadow w-full bg-base-200">
           <div className="stat place-items-center">
             <div className="stat-title">Number</div>

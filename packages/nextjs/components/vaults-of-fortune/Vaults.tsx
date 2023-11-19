@@ -1,6 +1,6 @@
-import { ChangeEvent, useState } from "react";
-import Image from "next/image";
-import { formatEther, formatUnits } from "viem";
+import { ChangeEvent, useEffect, useState } from "react";
+// import Image from "next/image";
+import { formatEther, formatUnits, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { IVaultManager, useVaultManager } from "~~/hooks/useVaultManager";
@@ -13,6 +13,8 @@ import { IVaultManager, useVaultManager } from "~~/hooks/useVaultManager";
 
 export const Vaults = () => {
   const [showDeposit, setShowDeposit] = useState(true);
+
+  const [maxDeposit, setMaxDeposit] = useState(0);
 
   const [vaultDeposit, setVaultDeposit] = useState({
     lowRisk: { amount: "0", percentage: 0 },
@@ -35,6 +37,10 @@ export const Vaults = () => {
     args: [account.address],
   });
 
+  useEffect(() => {
+    setMaxDeposit(Number(formatEther(userGoldBalance || 0n)));
+  }, [userGoldBalance]);
+
   const lowRiskVault = useVaultManager("LowRiskVault", vaultDeposit.lowRisk.amount, vaultWithdraw.lowRisk.amount);
   const mediumRiskVault = useVaultManager(
     "MediumRiskVault",
@@ -49,6 +55,7 @@ export const Vaults = () => {
     key: VaultKey;
     title: string;
   };
+  console.log("vaultDeposit", vaultDeposit);
 
   const vaults: VaultItem[] = [
     {
@@ -70,7 +77,7 @@ export const Vaults = () => {
 
   const handleVaultDepositChange = (event: ChangeEvent<HTMLInputElement>, vaultType: string) => {
     const percentage = +event.target.value;
-    const amount = (percentage * Number(formatEther(userGoldBalance || 0n))) / 100;
+    const amount = (percentage * maxDeposit) / 100;
 
     setVaultDeposit(prevState => ({
       ...prevState,
@@ -103,6 +110,14 @@ export const Vaults = () => {
         return (
           <div
             key={vault.title}
+            style={{
+              backgroundColor:
+                vault.key === "lowRisk"
+                  ? "rgba(75, 192, 192, 0.2)"
+                  : vault.key === "mediumRisk"
+                  ? "rgba(255, 206, 86, 0.2)"
+                  : "rgba(255, 99, 132, 0.2)",
+            }}
             className={`bg-base-300 p-5 md:p-10 rounded-2xl border ${
               vault.key === "lowRisk"
                 ? "border-[#4BC0C0]"
@@ -111,20 +126,21 @@ export const Vaults = () => {
                 : "border-[#FF6384]"
             } `}
           >
-            <div className="flex justify-center items-center mb-5 gap-5 xl:gap-10">
-              <div className="rounded-2xl overflow-hidden">
-                <Image src="/vault.png" width="200" height="200" alt="cartoon vault" />
-              </div>
+            <div className="flex justify-between items-center mb-5 gap-5 xl:gap-10">
+              {/* <div className="rounded-2xl overflow-hidden">
+                <Image src="/vault.png" width="100" height="100" alt="cartoon vault" />
+              </div> */}
+              <h2 className="mb-3 text-3xl xl:text-4xl font-cubano text-center">{vault.title} Vault</h2>
+
               <div>
-                <h2 className="mb-3 text-4xl font-cubano text-center">{vault.title}</h2>
-                <h6 className="text-center text-xl mb-3 ">
-                  {Number(vault.minimumROI) || 0} to {Number(vault.maximumROI) || 0}%
+                <h6 className="text-center text-xl mb-3 bg-base-300 py-5 rounded-xl w-40">
+                  {Number(vault.minimumROI) || 0}% to {Number(vault.maximumROI) || 0}%
                 </h6>
               </div>
             </div>
-            <div className="">
-              <div className="overflow-x-auto mb-5">
-                <table className="table text-xl bg-base-200">
+            <div className="bg-base-300 rounded-2xl">
+              <div className="overflow-x-auto">
+                <table className="table text-xl">
                   <thead>
                     <tr className="text-xl text-white border-b border-base-100">
                       <th></th>
@@ -151,17 +167,17 @@ export const Vaults = () => {
               </div>
 
               <div>
-                <div className="bg-base-200 p-5 rounded-2xl">
-                  <div className="flex bg-base-100 p-1.5 grid grid-cols-2 rounded-xl mb-5">
+                <div className="bg-base-300 p-5 rounded-2xl">
+                  <div className="flex bg-base-200 p-1.5 grid grid-cols-2 rounded-xl mb-5">
                     <button
                       onClick={() => setShowDeposit(true)}
-                      className={`${showDeposit && "btn"} rounded-lg capitalize text-xl`}
+                      className={`${showDeposit && "btn btn-primary"} rounded-lg capitalize text-xl`}
                     >
                       Deposit
                     </button>
                     <button
                       onClick={() => setShowDeposit(false)}
-                      className={`${!showDeposit && "btn"} rounded-lg capitalize text-xl`}
+                      className={`${!showDeposit && "btn btn-primary"} rounded-lg capitalize text-xl`}
                     >
                       Withdraw
                     </button>
@@ -182,23 +198,35 @@ export const Vaults = () => {
                         <div className="text-xl text-center">{vaultDeposit[vault.key].percentage}%</div>
                       </div>
 
-                      <button
-                        className="btn btn-accent w-full text-xl capitalize"
-                        disabled={!((userGoldBalance ?? 0) > 0)}
-                        onClick={async () => {
-                          await vault.approve();
-                          await vault.deposit();
-                          setVaultDeposit(prevState => ({
-                            ...prevState,
-                            [vault.key]: {
-                              percentage: 0,
-                              amount: "0",
-                            },
-                          }));
-                        }}
-                      >
-                        Deposit
-                      </button>
+                      {(vault.userGoldAllowance || 0n) <= parseEther(vault.depositAmount) ? (
+                        <button
+                          className="btn btn-accent w-full text-xl capitalize"
+                          disabled={!((userGoldBalance ?? 0) > 0)}
+                          onClick={async () => {
+                            await vault.approve();
+                          }}
+                        >
+                          Approve
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn-accent w-full text-xl capitalize"
+                          disabled={!((maxDeposit ?? 0) > 0)}
+                          onClick={async () => {
+                            setMaxDeposit(maxDeposit - Number(vaultDeposit[vault.key].amount));
+                            await vault.deposit();
+                            setVaultDeposit(prevState => ({
+                              ...prevState,
+                              [vault.key]: {
+                                percentage: 0,
+                                amount: "0",
+                              },
+                            }));
+                          }}
+                        >
+                          Deposit
+                        </button>
+                      )}
                     </>
                   ) : (
                     <>
@@ -218,7 +246,7 @@ export const Vaults = () => {
                       </div>
 
                       <button
-                        className="btn btn-accent w-full"
+                        className="btn btn-accent w-full capitalize text-xl"
                         disabled={!((vault.maxWithdraw ?? 0) > 0)}
                         onClick={async () => {
                           await vault.withdraw();
