@@ -14,20 +14,15 @@ interface IPlayerScores {
 export const Leaderboard = () => {
   const [playersScores, setPlayersScores] = useState<IPlayerScores[]>([]);
 
-  const { data: currentContest } = useScaffoldContractRead({
+  const { data: currentContestNumber } = useScaffoldContractRead({
     contractName: "Market",
-    functionName: "currentContest",
+    functionName: "getCurrentContestNumber",
   });
 
-  const { data: currentRound } = useScaffoldContractRead({
+  const { data: currentRoundNumber } = useScaffoldContractRead({
     contractName: "Market",
-    functionName: "currentRound",
+    functionName: "getCurrentRoundNumber",
   });
-
-  let currentRoundNumber = 1n;
-  if (currentRound) {
-    currentRoundNumber = (currentRound as unknown as any[])[1];
-  }
 
   const { data: events, isLoading: isLoadingEvents } = useScaffoldEventHistory({
     contractName: "Market",
@@ -35,7 +30,7 @@ export const Leaderboard = () => {
     fromBlock: 0n,
     blockData: true,
     // Apply filters to the event based on parameter names and values { [parameterName]: value },
-    filters: { contestNumber: currentContest, roundNumber: currentRoundNumber },
+    filters: { contestNumber: currentContestNumber, roundNumber: currentRoundNumber },
     transactionData: true,
     receiptData: true,
   });

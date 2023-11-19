@@ -2577,7 +2577,7 @@ const deployedContracts = {
   },
   80001: {
     GoldToken: {
-      address: "0x77fDA92C47033Ba75Be3AA161f23f90e56743e09",
+      address: "0x3C52E8cD1642e7736D0e5577a0111C0963a31e0A",
       abi: [
         {
           inputs: [],
@@ -2857,7 +2857,7 @@ const deployedContracts = {
       ],
     },
     HighRiskVault: {
-      address: "0x9f047de73288912dF4e18cfA7A3C0a58443D814D",
+      address: "0x246FE4F8D0f5A7F20e3f3076C60A8BCC0435A332",
       abi: [
         {
           inputs: [
@@ -3624,7 +3624,7 @@ const deployedContracts = {
       ],
     },
     LowRiskVault: {
-      address: "0x23Df6c571004d11962d86f136F5947B5FfEbFBa1",
+      address: "0xd5C28514e5fE94CC7a99b37261ca3B8EA9dB50Cc",
       abi: [
         {
           inputs: [
@@ -4391,7 +4391,7 @@ const deployedContracts = {
       ],
     },
     Market: {
-      address: "0x484cC9b86Ca0eef77dCcDf20041A69A5Df601040",
+      address: "0xecc6850e0b5c064bB20F2bBFb1973388746d4283",
       abi: [
         {
           inputs: [
@@ -4525,7 +4525,7 @@ const deployedContracts = {
               type: "uint256",
             },
           ],
-          name: "RoundOpen",
+          name: "RoundClosing",
           type: "event",
         },
         {
@@ -4563,6 +4563,19 @@ const deployedContracts = {
             },
           ],
           name: "RoundROIResults",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "roundNumber",
+              type: "uint256",
+            },
+          ],
+          name: "RoundStart",
           type: "event",
         },
         {
@@ -4648,6 +4661,11 @@ const deployedContracts = {
               name: "number",
               type: "uint256",
             },
+            {
+              internalType: "enum Market.ContestState",
+              name: "state",
+              type: "uint8",
+            },
           ],
           stateMutability: "view",
           type: "function",
@@ -4657,14 +4675,14 @@ const deployedContracts = {
           name: "currentRound",
           outputs: [
             {
-              internalType: "enum Market.RoundState",
-              name: "state",
-              type: "uint8",
-            },
-            {
               internalType: "uint256",
               name: "number",
               type: "uint256",
+            },
+            {
+              internalType: "enum Market.RoundState",
+              name: "state",
+              type: "uint8",
             },
           ],
           stateMutability: "view",
@@ -4675,6 +4693,32 @@ const deployedContracts = {
           name: "enterContest",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getCurrentContestNumber",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getCurrentContestState",
+          outputs: [
+            {
+              internalType: "enum Market.ContestState",
+              name: "",
+              type: "uint8",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -4718,12 +4762,44 @@ const deployedContracts = {
         },
         {
           inputs: [],
+          name: "getRoundTimeRemaining",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
           name: "highRiskVault",
           outputs: [
             {
               internalType: "contract IVault",
               name: "",
               type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "addr",
+              type: "address",
+            },
+          ],
+          name: "isPlayer",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
             },
           ],
           stateMutability: "view",
@@ -4923,7 +4999,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "startRound",
+          name: "startCountdown",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -4983,7 +5059,7 @@ const deployedContracts = {
       ],
     },
     MediumRiskVault: {
-      address: "0x06B49Bfa70Dc76fBaAEd04f5579e2b9a6Ba1019F",
+      address: "0x0c401A343a664372357fB3BEEB1A985a780AA3e3",
       abi: [
         {
           inputs: [

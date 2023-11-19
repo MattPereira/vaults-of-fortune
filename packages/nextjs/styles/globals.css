@@ -33,3 +33,19 @@ p {
 .btn.btn-ghost {
   @apply shadow-none;
 }
+
+@keyframes pulse {
+  0% {
+    box-shadow: inset 0 0 20px 10px rgba(255, 0, 0, 0.6); /* Increased initial glow */
+  }
+  50% {
+    box-shadow: inset 0 0 40px 20px rgba(255, 0, 0, 0.4); /* More expansive and softer glow */
+  }
+  100% {
+    box-shadow: inset 0 0 20px 10px rgba(255, 0, 0, 0.6); /* Return to initial glow */
+  }
+}
+
+.body-glow {
+  animation: pulse 4s infinite;
+}

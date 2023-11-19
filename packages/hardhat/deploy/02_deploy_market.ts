@@ -34,6 +34,7 @@ const deployMarket: DeployFunction = async function (hre: HardhatRuntimeEnvironm
       requestConfirmations,
       callbackGasLimit,
     ],
+    log: true,
   });
 
   const market = await hre.ethers.getContract("Market", deployer);
@@ -46,15 +47,39 @@ const deployMarket: DeployFunction = async function (hre: HardhatRuntimeEnvironm
   // 3. Send all the gold to the market
   await goldToken.transfer(market.address, await goldToken.balanceOf(deployer));
 
-  // try {
-  //   // 4. add market contract to VRF subscription
-  //   const signer = await hre.ethers.provider.getSigner(deployer);
-  //   const vrfCoordinator = await hre.ethers.getContractAt("VRFCoordinator", vrfCoordinatorAddress, signer);
-  //   await vrfCoordinator.addConsumer(subscriptionId, market.address);
-  // } catch (e) {
-  //   console.log("Failed to add market contract to VRF subscription.");
-  //   console.log(e);
-  // }
+  // 4. add market contract to VRF subscription
+  try {
+    const signer = await hre.ethers.provider.getSigner(deployer);
+    const vrfCoordinator = await hre.ethers.getContractAt(
+      [
+        {
+          inputs: [
+            {
+              internalType: "uint64",
+              name: "subId",
+              type: "uint64",
+            },
+            {
+              internalType: "address",
+              name: "consumer",
+              type: "address",
+            },
+          ],
+          name: "addConsumer",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+      ],
+      vrfCoordinatorAddress,
+      signer,
+    );
+    await vrfCoordinator.addConsumer(subscriptionId, market.address);
+    console.log("Added market contract to VRF subscription");
+  } catch (e) {
+    console.log("Failed to add market contract to VRF subscription.");
+    console.log(e);
+  }
 };
 
 export default deployMarket;

@@ -12,6 +12,8 @@ import { IVaultManager, useVaultManager } from "~~/hooks/useVaultManager";
  */
 
 export const Vaults = () => {
+  const [showDeposit, setShowDeposit] = useState(true);
+
   const [vaultDeposit, setVaultDeposit] = useState({
     lowRisk: { amount: "0", percentage: 0 },
     mediumRisk: { amount: "0", percentage: 0 },
@@ -99,23 +101,32 @@ export const Vaults = () => {
     <>
       {vaults.map(vault => {
         return (
-          <div key={vault.title} className="3xl:px-5">
+          <div
+            key={vault.title}
+            className={`bg-base-300 p-5 md:p-10 rounded-2xl border ${
+              vault.key === "lowRisk"
+                ? "border-[#4BC0C0]"
+                : vault.key === "mediumRisk"
+                ? "border-[#FFCE56]"
+                : "border-[#FF6384]"
+            } `}
+          >
             <div className="flex justify-center items-center mb-5 gap-5 xl:gap-10">
               <div className="rounded-2xl overflow-hidden">
                 <Image src="/vault.png" width="200" height="200" alt="cartoon vault" />
               </div>
               <div>
-                <h2 className="mb-3 text-3xl font-cubano text-center">{vault.title}</h2>
+                <h2 className="mb-3 text-4xl font-cubano text-center">{vault.title}</h2>
                 <h6 className="text-center text-xl mb-3 ">
                   {Number(vault.minimumROI) || 0} to {Number(vault.maximumROI) || 0}%
                 </h6>
               </div>
             </div>
             <div className="">
-              <div className="overflow-x-auto mb-7">
-                <table className="table text-xl bg-base-100">
+              <div className="overflow-x-auto mb-5">
+                <table className="table text-xl bg-base-200">
                   <thead>
-                    <tr className="text-xl text-white">
+                    <tr className="text-xl text-white border-b border-base-100">
                       <th></th>
                       <th>Total</th>
                       <th>Yours</th>
@@ -140,70 +151,90 @@ export const Vaults = () => {
               </div>
 
               <div>
-                {/* Deposit Interface */}
-                <div className="flex items-center mb-5 gap-4">
-                  <div className="mr-3">{vaultDeposit[vault.key].percentage}%</div>
-                  <input
-                    type="range"
-                    min={0}
-                    max="100"
-                    value={vaultDeposit[vault.key].percentage}
-                    onChange={event => handleVaultDepositChange(event, vault.key)}
-                    className="range"
-                  />
-                  <div className="flex justify-center">
-                    <div className="mr-1">{Number(vault.depositAmount).toFixed(2)}</div>GLD
+                <div className="bg-base-200 p-5 rounded-2xl">
+                  <div className="flex bg-base-100 p-1.5 grid grid-cols-2 rounded-xl mb-5">
+                    <button
+                      onClick={() => setShowDeposit(true)}
+                      className={`${showDeposit && "btn"} rounded-lg capitalize text-xl`}
+                    >
+                      Deposit
+                    </button>
+                    <button
+                      onClick={() => setShowDeposit(false)}
+                      className={`${!showDeposit && "btn"} rounded-lg capitalize text-xl`}
+                    >
+                      Withdraw
+                    </button>
                   </div>
-                  <button
-                    className="btn btn-accent w-28"
-                    disabled={!((userGoldBalance ?? 0) > 0)}
-                    onClick={async () => {
-                      await vault.approve();
-                      await vault.deposit();
-                      setVaultDeposit(prevState => ({
-                        ...prevState,
-                        [vault.key]: {
-                          percentage: 0,
-                          amount: "0",
-                        },
-                      }));
-                    }}
-                  >
-                    Deposit
-                  </button>
-                </div>
 
-                {/* Withdraw Interface */}
+                  {showDeposit ? (
+                    <>
+                      <div className="text-xl text-center mb-3">{Number(vault.depositAmount).toFixed(1)} GLD</div>
+                      <div className="flex items-center gap-4 mb-1 px-3 mb-5">
+                        <input
+                          type="range"
+                          min={0}
+                          max="100"
+                          value={vaultDeposit[vault.key].percentage}
+                          onChange={event => handleVaultDepositChange(event, vault.key)}
+                          className="range"
+                        />
+                        <div className="text-xl text-center">{vaultDeposit[vault.key].percentage}%</div>
+                      </div>
 
-                <div className="flex items-center gap-4">
-                  <div className="mr-3">{vaultWithdraw[vault.key].percentage}%</div>
-                  <input
-                    type="range"
-                    min={0}
-                    max="100"
-                    value={vaultWithdraw[vault.key].percentage}
-                    onChange={event => handleVaultWithdrawChange(event, vault.key)}
-                    className="range"
-                  />
-                  <div className="flex justify-center">
-                    <div className="mr-1">{Number(vault.withdrawAmount).toFixed(2)}</div>GLD
-                  </div>
-                  <button
-                    className="btn btn-accent w-28"
-                    disabled={!((vault.maxWithdraw ?? 0) > 0)}
-                    onClick={async () => {
-                      await vault.withdraw();
-                      setVaultWithdraw(prevState => ({
-                        ...prevState,
-                        [vault.key]: {
-                          percentage: 0,
-                          amount: "0",
-                        },
-                      }));
-                    }}
-                  >
-                    Withdraw
-                  </button>
+                      <button
+                        className="btn btn-accent w-full text-xl capitalize"
+                        disabled={!((userGoldBalance ?? 0) > 0)}
+                        onClick={async () => {
+                          await vault.approve();
+                          await vault.deposit();
+                          setVaultDeposit(prevState => ({
+                            ...prevState,
+                            [vault.key]: {
+                              percentage: 0,
+                              amount: "0",
+                            },
+                          }));
+                        }}
+                      >
+                        Deposit
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-center">
+                        <div className="text-xl mb-3">{Number(vault.withdrawAmount).toFixed(1)} GLD</div>
+                      </div>
+                      <div className="flex items-center gap-4 mb-5 px-2">
+                        <div className="text-xl">{vaultWithdraw[vault.key].percentage}%</div>
+                        <input
+                          type="range"
+                          min={0}
+                          max="100"
+                          value={vaultWithdraw[vault.key].percentage}
+                          onChange={event => handleVaultWithdrawChange(event, vault.key)}
+                          className="range"
+                        />
+                      </div>
+
+                      <button
+                        className="btn btn-accent w-full"
+                        disabled={!((vault.maxWithdraw ?? 0) > 0)}
+                        onClick={async () => {
+                          await vault.withdraw();
+                          setVaultWithdraw(prevState => ({
+                            ...prevState,
+                            [vault.key]: {
+                              percentage: 0,
+                              amount: "0",
+                            },
+                          }));
+                        }}
+                      >
+                        Withdraw
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

@@ -104,8 +104,23 @@ export const Portfolio = () => {
           <h3 className="text-white text-center font-cubano text-3xl mb-5">Portfolio</h3>
 
           <div className="flex justify-center">
-            <div className="w-[350px] h-[350px]">
+            <div className="w-[350px] h-[350px] relative">
               <Doughnut data={data} />
+              <button
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  zIndex: 10,
+                }}
+                className="btn btn-accent px-5 h-28 w-28 text-xl capitalize"
+                onClick={() => {
+                  /* your click handler here */
+                }}
+              >
+                Ready
+              </button>
             </div>
           </div>
         </>

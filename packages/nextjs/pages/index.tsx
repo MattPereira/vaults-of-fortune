@@ -24,7 +24,7 @@ const Home: NextPage = () => {
 
   useScaffoldEventSubscriber({
     contractName: "Market",
-    eventName: "RoundOpen",
+    eventName: "RoundStart",
     listener: logs => {
       logs.map(log => {
         const { roundNumber } = log.args;
@@ -58,8 +58,8 @@ const Home: NextPage = () => {
     <>
       <MetaHeader />
 
-      <div className="bg-base-300 py-14 min-h-[468px] px-5 xl:px-14">
-        <div className="rounded-xl grid grid-cols-1 2xl:grid-cols-3 gap-14">
+      <div className="bg-base-300 min-h-[468px]">
+        <div className="rounded-xl grid grid-cols-1 2xl:grid-cols-3 gap-14 p-14">
           <div>
             <Leaderboard />
           </div>

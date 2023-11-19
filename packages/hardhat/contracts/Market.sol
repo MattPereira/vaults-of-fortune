@@ -9,19 +9,17 @@ import "@chainlink/contracts/src/v0.8/automation/AutomationCompatible.sol";
 
 import "./IVault.sol";
 
-/** Market Contract
+/** Market contract that orchestrates a contest consisting of three rounds
  *
- * this contract holds a bajillion GLD tokens and distributes the tokens to the vaults
- * according to the results of the VRF Coordinator
+ * @dev chainlink automation triggers the start of a new round when
+ * 3 minutes time has elapsed since the end of the last round OR 1/2 of the players hit "ready" button
  *
- * will also need automation to trigger the request for random numbers
- * at end of round timer. then use the fullfilRandomness function to
- * distribute the tokens to each vault accordingly
+ * @dev during each round contestants allocate their GLD tokens into the vaults in hopes of positive ROI
  *
- * Each contest has 3 rounds
- * contestants allocate their GLD tokens into the vaults and get a return on investment
+ * @dev this contract distributes the tokens to the vaults according to the results of the VRF Coordinator
  * at the end of each round
  *
+ * @dev on deployment, default state of contest and round is OPEN, but VRF not triggered until players enter
  */
 
 error Market__UpkeepNotNeeded();
@@ -29,17 +27,24 @@ error Market__UpkeepNotNeeded();
 contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	enum RoundState {
 		OPEN,
+		CLOSING,
 		CALCULATING,
 		CLOSED
 	}
 
+	enum ContestState {
+		OPEN,
+		CLOSED
+	}
+
 	struct Round {
-		RoundState state;
 		uint256 number;
+		RoundState state;
 	}
 
 	struct Contest {
 		uint256 number;
+		ContestState state;
 	}
 
 	Round public currentRound;
@@ -48,10 +53,11 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	IVault public lowRiskVault;
 	IVault public mediumRiskVault;
 	IVault public highRiskVault;
-	uint256 public roundInterval = 99 seconds;
+	uint256 public roundInterval = 30 seconds;
 	uint256 public lastTimestamp;
 	address[] public players;
 	uint256 public constant STARTING_AMOUNT = 10000 * 10 ** 18; // 10,000 GLD tokens
+	mapping(address => bool) playerReady; // player address => ready (true/false)
 
 	// VRF requirements
 	VRFCoordinatorV2Interface public vrfCoordinator;
@@ -62,7 +68,8 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	uint32 public numWords = 3; // how many random values
 
 	// EVENTS
-	event RoundOpen(uint256 indexed roundNumber);
+	event RoundStart(uint256 indexed roundNumber);
+	event RoundClosing(uint256 indexed roundNumber);
 	event RoundROIResults(
 		uint256 indexed contestNumber,
 		uint256 indexed roundNumber,
@@ -88,15 +95,15 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		uint16 _requestConfirmations,
 		uint32 _callbackGasLimit
 	) VRFConsumerBaseV2(_vrfCoordinator) {
-		// contest contracts
+		// contest requirements
 		token = IERC20(_token);
 		lowRiskVault = IVault(_lowRiskVault);
 		mediumRiskVault = IVault(_mediumRiskVault);
 		highRiskVault = IVault(_highRiskVault);
-		// prevents upkeep from triggering
-		currentRound.state = RoundState.CLOSED;
 		currentRound.number = 1;
+		currentRound.state = RoundState.OPEN;
 		currentContest.number = 1;
+		currentContest.state = ContestState.OPEN;
 		// VRF requirements
 		vrfCoordinator = VRFCoordinatorV2Interface(_vrfCoordinator);
 		keyHash = _keyHash;
@@ -106,14 +113,23 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	}
 
 	/** Handles contest entry
+	 *
 	 * @notice msg.sender must have 0 GLD tokens to enter
+	 * @dev resets the lastTimestamp so round end won't trigger until 3 minutes after last entry
 	 */
 
 	function enterContest() external {
 		require(
+			currentContest.state == ContestState.OPEN,
+			"Contest is not open"
+		);
+		require(
 			token.balanceOf(msg.sender) == 0,
 			"Please return your GLD tokens to market contract before entering a new contest"
 		);
+
+		players.push(msg.sender);
+		token.transfer(msg.sender, STARTING_AMOUNT);
 
 		emit PlayerTotalAssetUpdate(
 			currentContest.number,
@@ -121,18 +137,6 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 			msg.sender,
 			STARTING_AMOUNT
 		);
-
-		players.push(msg.sender);
-		token.transfer(msg.sender, STARTING_AMOUNT);
-	}
-
-	/** Handles starting round which allows for upkeep to be triggered
-	 */
-
-	function startRound() external onlyOwner {
-		currentRound.state = RoundState.OPEN;
-		lastTimestamp = block.timestamp;
-		emit RoundOpen(currentRound.number); // listening for this event to reset countdown timer on frontend
 	}
 
 	/** Handles reseting state so a new contest can begin
@@ -144,9 +148,10 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	function resetContest() external onlyOwner {
 		// increment contest number
 		currentContest.number += 1;
+		currentContest.state = ContestState.OPEN;
 		// reset the round
 		currentRound.number = 1;
-		currentRound.state = RoundState.CLOSED;
+		currentRound.state = RoundState.OPEN;
 		// reset the players array
 		players = new address[](0);
 		// pull the gold from the vaults back into market contract
@@ -155,13 +160,49 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		highRiskVault.simulateLoss(highRiskVault.totalAssets());
 	}
 
+	/** Check if address is a player in the current contest
+	 * @param addr the address to check
+	 */
+
+	function isPlayer(address addr) public view returns (bool) {
+		for (uint i = 0; i < players.length; i++) {
+			if (players[i] == addr) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/** Start countdown timer to end the round
+	 * @notice caller's GLD balance must be fully allocated in vaults
+	 */
+
+	function startCountdown() external {
+		require(
+			isPlayer(msg.sender),
+			"Only active players can start the countdown"
+		);
+		require(
+			currentRound.state == RoundState.OPEN,
+			"Current round must be open to start the countdown"
+		);
+		require(
+			token.balanceOf(msg.sender) == 0,
+			"Your GLD must be fully allocated in order to start the countdown"
+		);
+
+		currentRound.state = RoundState.CLOSING;
+		lastTimestamp = block.timestamp;
+		emit RoundClosing(currentRound.number);
+	}
+
 	/** Chainlink Keeper nodes call this function to determine if upkeep is needed
 	 *
 	 *  The following should be true in order to return true:
-	 * 	1. Most recent contest is open
-	 *  2. Most recent contest has players
-	 *  3. Most recent round is open
-	 *  4. Time interval has passed since last contestant entry
+	 * 	1. contest is open
+	 * 	2. round is in CLOSING state
+	 * 	3. 60 seconds have passed since lastTimestamp
+	 *
 	 */
 
 	function checkUpkeep(
@@ -172,10 +213,11 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		override
 		returns (bool upkeepNeeded, bytes memory /* performData */)
 	{
-		bool roundOpen = currentRound.state == RoundState.OPEN;
+		bool contestOpen = currentContest.state == ContestState.OPEN;
+		bool roundClosing = currentRound.state == RoundState.CLOSING;
 		bool timePassed = (block.timestamp - lastTimestamp) > roundInterval;
-		bool hasPlayers = (players.length > 0);
-		upkeepNeeded = (roundOpen && timePassed && hasPlayers);
+
+		upkeepNeeded = (contestOpen && roundClosing && timePassed);
 		return (upkeepNeeded, "0x0");
 	}
 
@@ -242,11 +284,24 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 			);
 		}
 
-		if (currentRound.number < 3) {
-			currentRound.number += 1;
+		// reset all players ready status
+		for (uint i = 0; i < players.length; i++) {
+			if (playerReady[players[i]]) {
+				playerReady[players[i]] = false;
+			}
 		}
 
-		currentRound.state = RoundState.CLOSED;
+		if (currentRound.number < 3) {
+			// prepare for next round
+			currentRound.number += 1;
+			currentRound.state = RoundState.OPEN;
+			lastTimestamp = block.timestamp;
+			emit RoundStart(currentRound.number);
+		} else {
+			// ends the contest
+			currentRound.state = RoundState.CLOSED;
+			currentContest.state = ContestState.CLOSED;
+		}
 	}
 
 	/** Uses random value to distribute/take tokens to/from the vaults
@@ -298,6 +353,14 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	}
 
 	// Getters
+	function getCurrentContestNumber() public view returns (uint256) {
+		return currentContest.number;
+	}
+
+	function getCurrentContestState() public view returns (ContestState) {
+		return currentContest.state;
+	}
+
 	function getCurrentRoundNumber() public view returns (uint256) {
 		return currentRound.number;
 	}
@@ -308,5 +371,18 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 
 	function getPlayers() public view returns (address[] memory) {
 		return players;
+	}
+
+	function getRoundTimeRemaining() public view returns (uint256) {
+		if (block.timestamp >= lastTimestamp) {
+			uint256 timeElapsed = block.timestamp - lastTimestamp;
+			if (timeElapsed < roundInterval) {
+				return roundInterval - timeElapsed;
+			} else {
+				return 0;
+			}
+		} else {
+			return roundInterval;
+		}
 	}
 }

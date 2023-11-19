@@ -6,9 +6,6 @@ type IRoundStateToName = {
 };
 
 export const Round = () => {
-  const [countdown, setCountdown] = useState(99);
-  const [startCountdown, setStartCountdown] = useState(false);
-
   const { data: roundNumber } = useScaffoldContractRead({
     contractName: "Market",
     functionName: "getCurrentRoundNumber",
@@ -19,31 +16,26 @@ export const Round = () => {
     functionName: "getCurrentRoundState",
   });
 
-  const { data: roundInterval } = useScaffoldContractRead({
+  const { data: roundTimeRemaining } = useScaffoldContractRead({
     contractName: "Market",
-    functionName: "roundInterval",
+    functionName: "getRoundTimeRemaining",
   });
-
-  useEffect(() => {
-    if (startCountdown) {
-      // Set the initial value of the countdown
-      setCountdown(Number(roundInterval));
-
-      const interval = setInterval(() => {
-        setCountdown(prevCountdown => (prevCountdown > 0 ? prevCountdown - 1 : 0));
-      }, 1000); // Update every second
-
-      return () => clearInterval(interval); // Clear the interval on component unmount
-    }
-  }, [roundInterval, startCountdown]);
 
   useScaffoldEventSubscriber({
     contractName: "Market",
-    eventName: "RoundOpen",
+    eventName: "RoundStart",
 
     listener: logs => {
       console.log("RoundOpen", logs);
-      setStartCountdown(true);
+    },
+  });
+
+  useScaffoldEventSubscriber({
+    contractName: "Market",
+    eventName: "RoundClosing",
+
+    listener: logs => {
+      console.log("RoundClosing", logs);
     },
   });
 
@@ -67,15 +59,9 @@ export const Round = () => {
             <div className="stat-title">State</div>
             <div className="stat-value text-4xl">{roundState !== undefined && roundStateToName[roundState]}</div>
           </div>
-          <div className="stat place-items-center">
+          <div className="stat place-items-center body-glow">
             <div className="stat-title">Clock</div>
-            <div className="stat-value">
-              <div className="flex justify-center">
-                <span className="countdown font-mono text-4xl ">
-                  <span style={{ "--value": countdown } as React.CSSProperties}></span>
-                </span>
-              </div>
-            </div>
+            <div className="stat-value">{Number(roundTimeRemaining) || 0}</div>
           </div>
         </div>
       </div>
