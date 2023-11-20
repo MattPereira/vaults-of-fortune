@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useScaffoldContractRead, useScaffoldEventHistory, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
-type IRoundStateToName = {
-  [key: number]: string;
-};
-
 export const Round = () => {
+  const [isRoundClosing, setIsRoundClosing] = useState(false);
+
   const { data: roundNumber } = useScaffoldContractRead({
     contractName: "Market",
     functionName: "getCurrentRoundNumber",
@@ -16,10 +14,10 @@ export const Round = () => {
     functionName: "getCurrentRoundState",
   });
 
-  const { data: roundTimeRemaining } = useScaffoldContractRead({
-    contractName: "Market",
-    functionName: "getRoundTimeRemaining",
-  });
+  // const { data: roundTimeRemaining } = useScaffoldContractRead({
+  //   contractName: "Market",
+  //   functionName: "getRoundTimeRemaining",
+  // });
 
   useScaffoldEventSubscriber({
     contractName: "Market",
@@ -27,6 +25,7 @@ export const Round = () => {
 
     listener: logs => {
       console.log("RoundOpen", logs);
+      setIsRoundClosing(false);
     },
   });
 
@@ -36,33 +35,37 @@ export const Round = () => {
 
     listener: logs => {
       console.log("RoundClosing", logs);
+      setIsRoundClosing(true);
     },
   });
 
-  const roundStateToName: IRoundStateToName = {
+  const roundStateToName: {
+    [key: number]: string;
+  } = {
     0: "Open",
-    1: "Calculating",
-    2: "Closed",
+    1: "Closing",
+    2: "Calculating",
+    3: "Closed",
   };
 
   return (
     <>
       <div className="mb-5">
-        <h3 className="text-center text-3xl xl:text-4xl font-cubano mb-5">Round</h3>
+        <h3 className="text-center text-3xl xl:text-4xl font-cubano mb-8">Round</h3>
         <div className="stats shadow w-full bg-base-200">
           <div className="stat place-items-center">
             <div className="stat-title">Number</div>
             <div className="stat-value text-4xl">{roundNumber?.toString()} of 3</div>
           </div>
 
-          <div className="stat place-items-center">
+          <div className={`stat place-items-center ${isRoundClosing && "body-glow"}`}>
             <div className="stat-title">State</div>
             <div className="stat-value text-4xl">{roundState !== undefined && roundStateToName[roundState]}</div>
           </div>
-          <div className="stat place-items-center body-glow">
+          {/* <div className="stat place-items-center">
             <div className="stat-title">Clock</div>
             <div className="stat-value">{Number(roundTimeRemaining) || 0}</div>
-          </div>
+          </div> */}
         </div>
       </div>
       <RoiTable />
@@ -103,6 +106,8 @@ const RoiTable = () => {
     transactionData: true,
     receiptData: true,
   });
+
+  console.log("events", events);
 
   useScaffoldEventSubscriber({
     contractName: "Market",

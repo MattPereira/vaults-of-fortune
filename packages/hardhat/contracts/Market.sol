@@ -57,7 +57,6 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	uint256 public lastTimestamp;
 	address[] public players;
 	uint256 public constant STARTING_AMOUNT = 10000 * 10 ** 18; // 10,000 GLD tokens
-	mapping(address => bool) playerReady; // player address => ready (true/false)
 
 	// VRF requirements
 	VRFCoordinatorV2Interface public vrfCoordinator;
@@ -154,10 +153,10 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		currentRound.state = RoundState.OPEN;
 		// reset the players array
 		players = new address[](0);
-		// pull the gold from the vaults back into market contract
-		lowRiskVault.simulateLoss(lowRiskVault.totalAssets());
-		mediumRiskVault.simulateLoss(mediumRiskVault.totalAssets());
-		highRiskVault.simulateLoss(highRiskVault.totalAssets());
+		// pull gold from the vaults back into market contract & burn any shares remaining
+		lowRiskVault.resetVault();
+		mediumRiskVault.resetVault();
+		highRiskVault.resetVault();
 	}
 
 	/** Check if address is a player in the current contest
@@ -269,6 +268,18 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 			highVaultROI
 		);
 
+		if (currentRound.number < 3) {
+			// prepare for next round
+			currentRound.number += 1;
+			currentRound.state = RoundState.OPEN;
+			lastTimestamp = block.timestamp;
+			emit RoundStart(currentRound.number);
+		} else {
+			// ends the contest
+			currentRound.state = RoundState.CLOSED;
+			currentContest.state = ContestState.CLOSED;
+		}
+
 		// emit event with each players updated total assets
 		for (uint i = 0; i < players.length; i++) {
 			address player = players[i];
@@ -282,25 +293,6 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 				player,
 				totalAssets
 			);
-		}
-
-		// reset all players ready status
-		for (uint i = 0; i < players.length; i++) {
-			if (playerReady[players[i]]) {
-				playerReady[players[i]] = false;
-			}
-		}
-
-		if (currentRound.number < 3) {
-			// prepare for next round
-			currentRound.number += 1;
-			currentRound.state = RoundState.OPEN;
-			lastTimestamp = block.timestamp;
-			emit RoundStart(currentRound.number);
-		} else {
-			// ends the contest
-			currentRound.state = RoundState.CLOSED;
-			currentContest.state = ContestState.CLOSED;
 		}
 	}
 

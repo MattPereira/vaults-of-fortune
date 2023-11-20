@@ -11,4 +11,6 @@ interface IVault {
 	function totalAssets() external view returns (uint256);
 
 	function maxWithdraw(address owner) external view returns (uint256);
+
+	function resetVault() external;
 }
