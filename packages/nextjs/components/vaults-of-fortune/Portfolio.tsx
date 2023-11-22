@@ -39,12 +39,12 @@ export const Portfolio = () => {
   });
 
   const {
-    writeAsync: startCountdown,
+    writeAsync: startClosing,
     // isLoading,
     // isMining,
   } = useScaffoldContractWrite({
     contractName: "Market",
-    functionName: "startCountdown",
+    functionName: "startClosing",
   });
 
   const { data: userGoldBalance } = useScaffoldContractRead({
@@ -137,7 +137,7 @@ export const Portfolio = () => {
                     zIndex: 10,
                   }}
                   className="btn btn-accent px-5 h-24 w-24 text-xl capitalize"
-                  onClick={() => startCountdown()}
+                  onClick={() => startClosing()}
                 >
                   Ready
                 </button>
@@ -148,10 +148,7 @@ export const Portfolio = () => {
         </>
       ) : (
         <div className="text-center h-full flex flex-col justify-center items-center">
-          <button
-            className="w-48 capitalize text-xl btn bg-yellow-400 hover:bg-yellow-500 text-primary px-5"
-            onClick={() => enterContest()}
-          >
+          <button className="w-48 capitalize text-xl btn btn-accent px-5" onClick={() => enterContest()}>
             Enter Contest
           </button>
         </div>

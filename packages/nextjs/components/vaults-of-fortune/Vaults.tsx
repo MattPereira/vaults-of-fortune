@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { formatEther, formatUnits, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
@@ -11,6 +11,8 @@ import { IVaultManager, useVaultManager } from "~~/hooks/useVaultManager";
  */
 
 export const Vaults = () => {
+  const [maxDeposit, setMaxDeposit] = useState(0n);
+
   const [vaultDeposit, setVaultDeposit] = useState({
     lowRisk: { amount: "0", percentage: 0, showInterface: true },
     mediumRisk: { amount: "0", percentage: 0, showInterface: true },
@@ -65,9 +67,16 @@ export const Vaults = () => {
     },
   ];
 
-  const handleVaultDepositChange = (event: ChangeEvent<HTMLInputElement>, vaultType: string) => {
+  useEffect(() => {
+    setMaxDeposit(userGoldBalance || 0n);
+  }, [userGoldBalance]);
+
+  type VaultDepositKeys = keyof typeof vaultDeposit;
+
+  const handleVaultDepositChange = (event: ChangeEvent<HTMLInputElement>, vaultType: VaultDepositKeys) => {
     const percentage = +event.target.value;
-    const amount = (percentage * Number(formatEther(userGoldBalance || 0n))) / 100;
+
+    const amount = (percentage * Number(formatEther(maxDeposit))) / 100;
 
     setVaultDeposit(prevState => ({
       ...prevState,
@@ -129,10 +138,12 @@ export const Vaults = () => {
           >
             <div className="flex justify-between items-center mb-5 gap-5 xl:gap-10">
               <h2 className="mb-3 text-3xl xl:text-4xl font-cubano text-center">{vault.title}</h2>
-
               <div>
                 <h6 className="text-center text-xl mb-3 bg-base-300 py-5 rounded-xl w-40">
-                  {Number(vault.minimumROI) || 0}% to {Number(vault.maximumROI) || 0}%
+                  <span className={`mr-1 ${Number(vault.minimumROI) < 0 ? "text-red-500" : "text-green-500"}`}>
+                    {Number(vault.minimumROI) || 0}%
+                  </span>{" "}
+                  to <span className="text-green-500 ml-1">{Number(vault.maximumROI) || 0}%</span>
                 </h6>
               </div>
             </div>
@@ -187,10 +198,10 @@ export const Vaults = () => {
 
                   {vaultDeposit[vault.key].showInterface ? (
                     <>
-                      <div className="text-xl text-center mb-3 bg-base-200 py-3 rounded-xl">
+                      <div className="text-xl text-center bg-base-200 py-3 rounded-xl">
                         {Number(vault.depositAmount).toFixed(1)} GLD
                       </div>
-                      <div className="flex items-center gap-4 mb-1 mb-5">
+                      <div className="flex items-center gap-4 my-5">
                         <div className="text-xl text-center">{vaultDeposit[vault.key].percentage}%</div>
                         <input
                           type="range"
@@ -215,8 +226,9 @@ export const Vaults = () => {
                       ) : (
                         <button
                           className="btn btn-accent w-full text-xl capitalize"
-                          disabled={!((userGoldBalance ?? 0) > 0)}
+                          disabled={!((userGoldBalance ?? 0) > 0) || vaultDeposit[vault.key].amount === "0"}
                           onClick={async () => {
+                            setMaxDeposit((userGoldBalance || 0n) - parseEther(vaultDeposit[vault.key].amount));
                             await vault.deposit();
                             setVaultDeposit(prevState => ({
                               ...prevState,
@@ -233,11 +245,11 @@ export const Vaults = () => {
                     </>
                   ) : (
                     <>
-                      <div className="text-xl text-center mb-3 bg-base-200 py-3 rounded-xl">
+                      <div className="text-xl text-center bg-base-200 py-3 rounded-xl">
                         {Number(vault.withdrawAmount).toFixed(1)} GLD
                       </div>
 
-                      <div className="flex items-center gap-4 mb-5">
+                      <div className="flex items-center gap-4 my-5">
                         <div className="text-xl">{vaultWithdraw[vault.key].percentage}%</div>
                         <input
                           type="range"

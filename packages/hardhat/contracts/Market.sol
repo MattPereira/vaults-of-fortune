@@ -16,6 +16,8 @@ import "./IVault.sol";
  *
  * @dev during each round contestants allocate their GLD tokens into the vaults in hopes of positive ROI
  *
+ * @dev round closes when fully allocated player calls startClosing() or 5 minutes have elapsed since round open (or last entry)
+ *
  * @dev this contract distributes the tokens to the vaults according to the results of the VRF Coordinator
  * at the end of each round
  *
@@ -34,6 +36,7 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 
 	enum ContestState {
 		OPEN,
+		PAUSED,
 		CLOSED
 	}
 
@@ -53,7 +56,7 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	IVault public lowRiskVault;
 	IVault public mediumRiskVault;
 	IVault public highRiskVault;
-	uint256 public roundInterval = 30 seconds;
+	uint256 public roundInterval = 5 minutes;
 	uint256 public lastTimestamp;
 	address[] public players;
 	uint256 public constant STARTING_AMOUNT = 10000 * 10 ** 18; // 10,000 GLD tokens
@@ -67,8 +70,22 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	uint32 public numWords = 3; // how many random values
 
 	// EVENTS
-	event RoundStart(uint256 indexed roundNumber);
-	event RoundClosing(uint256 indexed roundNumber);
+	event ContestOpened(uint256 indexed contestNumber, uint256 timestamp);
+	event RoundStart(
+		uint256 indexed roundNumber,
+		uint256 indexed contestNumber,
+		uint256 timestamp
+	);
+	event RoundClosing(
+		uint256 indexed roundNumber,
+		uint256 indexed contestNumber,
+		uint256 timestamp
+	);
+	event RoundCalculating(
+		uint256 indexed roundNumber,
+		uint256 indexed contestNumber,
+		uint256 timestamp
+	);
 	event RoundROIResults(
 		uint256 indexed contestNumber,
 		uint256 indexed roundNumber,
@@ -82,6 +99,7 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		address indexed player,
 		uint256 totalAssets
 	);
+	event ContestClosed(uint256 indexed contestNumber, uint256 timestamp);
 
 	constructor(
 		address _token,
@@ -114,21 +132,22 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	/** Handles contest entry
 	 *
 	 * @notice msg.sender must have 0 GLD tokens to enter
-	 * @dev resets the lastTimestamp so round end won't trigger until 3 minutes after last entry
+	 * @dev resets the lastTimestamp so round end won't trigger until 5 minutes after last entry or
 	 */
 
 	function enterContest() external {
 		require(
-			currentContest.state == ContestState.OPEN,
-			"Contest is not open"
+			currentRound.state != RoundState.CLOSED,
+			"Cannot enter contest after the third round has closed. Please contact Market owner to reset the contest."
 		);
 		require(
 			token.balanceOf(msg.sender) == 0,
-			"Please return your GLD tokens to market contract before entering a new contest"
+			"You must return all your GLD tokens to market contract before entering a new contest"
 		);
 
 		players.push(msg.sender);
 		token.transfer(msg.sender, STARTING_AMOUNT);
+		lastTimestamp = block.timestamp;
 
 		emit PlayerTotalAssetUpdate(
 			currentContest.number,
@@ -139,24 +158,40 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	}
 
 	/** Handles reseting state so a new contest can begin
-	 * 1. clear players array to allow for a new contest to begin
-	 * 2. reset the currentRound to 1
-	 * 3. send GLD from vaults to market contract
+	 * 1. burn the outstanding shares of each player in each vault
+	 * 2. pull gold from the vaults back into market contract
+	 * 3. increment contest number
+	 * 4. reset the players array
+	 * 5. reset current round number and open it
 	 */
 
 	function resetContest() external onlyOwner {
-		// increment contest number
+		IVault[3] memory vaults = [
+			lowRiskVault,
+			mediumRiskVault,
+			highRiskVault
+		];
+
+		for (uint i = 0; i < vaults.length; i++) {
+			for (uint j = 0; j < players.length; j++) {
+				address player = players[j];
+				IVault vault = vaults[i];
+				uint256 playerTotalShares = vault.balanceOf(player);
+				if (playerTotalShares > 0) {
+					vault.burnPlayerShares(player, playerTotalShares);
+				}
+			}
+		}
+
+		lowRiskVault.drainAssets();
+		mediumRiskVault.drainAssets();
+		highRiskVault.drainAssets();
+
 		currentContest.number += 1;
-		currentContest.state = ContestState.OPEN;
-		// reset the round
+		players = new address[](0);
 		currentRound.number = 1;
 		currentRound.state = RoundState.OPEN;
-		// reset the players array
-		players = new address[](0);
-		// pull gold from the vaults back into market contract & burn any shares remaining
-		lowRiskVault.resetVault();
-		mediumRiskVault.resetVault();
-		highRiskVault.resetVault();
+		emit ContestOpened(currentContest.number, block.timestamp);
 	}
 
 	/** Check if address is a player in the current contest
@@ -176,32 +211,45 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	 * @notice caller's GLD balance must be fully allocated in vaults
 	 */
 
-	function startCountdown() external {
+	function startClosing() external {
 		require(
 			isPlayer(msg.sender),
-			"Only active players can start the countdown"
+			"Only active players can start the closing process"
 		);
 		require(
 			currentRound.state == RoundState.OPEN,
-			"Current round must be open to start the countdown"
+			"Current round must be open to start the closing process"
 		);
 		require(
 			token.balanceOf(msg.sender) == 0,
-			"Your GLD must be fully allocated in order to start the countdown"
+			"Your GLD must be fully allocated in order to start the closing process"
 		);
 
 		currentRound.state = RoundState.CLOSING;
-		lastTimestamp = block.timestamp;
-		emit RoundClosing(currentRound.number);
+		emit RoundClosing(
+			currentRound.number,
+			currentContest.number,
+			block.timestamp
+		);
+	}
+
+	/** Owner of contract can pause/unpause the game
+	 * @dev prevents upkeep from triggering indefinitely
+	 */
+
+	function toggleGamePause() external onlyOwner {
+		if (currentContest.state == ContestState.OPEN) {
+			currentContest.state = ContestState.PAUSED;
+		} else {
+			currentContest.state = ContestState.OPEN;
+		}
 	}
 
 	/** Chainlink Keeper nodes call this function to determine if upkeep is needed
 	 *
 	 *  The following should be true in order to return true:
 	 * 	1. contest is open
-	 * 	2. round is in CLOSING state
-	 * 	3. 60 seconds have passed since lastTimestamp
-	 *
+	 * 	2. round is in CLOSING state OR 5 minutes have passed since last player entered
 	 */
 
 	function checkUpkeep(
@@ -212,11 +260,18 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		override
 		returns (bool upkeepNeeded, bytes memory /* performData */)
 	{
+		if (currentRound.state == RoundState.CALCULATING) {
+			return (false, "0x0");
+		}
+
 		bool contestOpen = currentContest.state == ContestState.OPEN;
 		bool roundClosing = currentRound.state == RoundState.CLOSING;
-		bool timePassed = (block.timestamp - lastTimestamp) > roundInterval;
+		bool hasPlayers = players.length > 0;
+		bool maxTimePassed = (block.timestamp - lastTimestamp) > roundInterval;
 
-		upkeepNeeded = (contestOpen && roundClosing && timePassed);
+		upkeepNeeded = (contestOpen &&
+			hasPlayers &&
+			(roundClosing || maxTimePassed));
 		return (upkeepNeeded, "0x0");
 	}
 
@@ -233,6 +288,12 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		}
 
 		currentRound.state = RoundState.CALCULATING;
+
+		emit RoundCalculating(
+			currentRound.number,
+			currentContest.number,
+			block.timestamp
+		);
 
 		// Will revert if subscription is not set and funded.
 		vrfCoordinator.requestRandomWords(
@@ -273,11 +334,16 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 			currentRound.number += 1;
 			currentRound.state = RoundState.OPEN;
 			lastTimestamp = block.timestamp;
-			emit RoundStart(currentRound.number);
+			emit RoundStart(
+				currentRound.number,
+				currentContest.number,
+				block.timestamp
+			);
 		} else {
 			// ends the contest
 			currentRound.state = RoundState.CLOSED;
 			currentContest.state = ContestState.CLOSED;
+			emit ContestClosed(currentContest.number, block.timestamp);
 		}
 
 		// emit event with each players updated total assets

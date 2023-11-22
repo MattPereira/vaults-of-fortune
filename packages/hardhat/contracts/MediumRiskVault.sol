@@ -37,14 +37,25 @@ contract MediumRiskVault is Ownable, ERC4626 {
 	}
 
 	/**
-	 * @dev resets the vault to initial state so new game can start fresh
+	 * @dev burns a player's shares w/o sending them any assets
 	 */
 
-	function resetVault() external onlyOwner {
+	function burnPlayerShares(
+		address playerAddress,
+		uint256 playerTotalShares
+	) external onlyOwner {
+		_burn(playerAddress, playerTotalShares);
+	}
+
+	/**
+	 * @dev allows Market contract to drain assets from this vault
+	 * to set starting conditions for new contest
+	 */
+
+	function drainAssets() external onlyOwner {
 		IERC20(asset()).transfer(
 			owner(),
 			IERC20(asset()).balanceOf(address(this))
 		);
-		_burn(address(this), totalSupply());
 	}
 }

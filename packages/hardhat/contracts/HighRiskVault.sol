@@ -30,23 +30,26 @@ contract HighRiskVault is Ownable, ERC4626 {
 	 * @param amount the amount of assets removed from this vault by market contract
 	 */
 
-	function simulateLoss(uint256 amount) external onlyOwner {
-		require(
-			amount <= IERC20(asset()).balanceOf(address(this)),
-			"Insufficient asset balance in high risk vault to simulate loss"
-		);
-		IERC20(asset()).transfer(owner(), amount);
+	/**
+	 * @dev burns a player's shares w/o sending them any assets
+	 */
+
+	function burnPlayerShares(
+		address playerAddress,
+		uint256 playerTotalShares
+	) external onlyOwner {
+		_burn(playerAddress, playerTotalShares);
 	}
 
 	/**
-	 * @dev resets the vault to initial state so new game can start fresh
+	 * @dev allows Market contract to drain assets from this vault
+	 * to set starting conditions for new contest
 	 */
 
-	function resetVault() external onlyOwner {
+	function drainAssets() external onlyOwner {
 		IERC20(asset()).transfer(
 			owner(),
 			IERC20(asset()).balanceOf(address(this))
 		);
-		_burn(address(this), totalSupply());
 	}
 }

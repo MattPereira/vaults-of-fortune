@@ -13,8 +13,8 @@ interface HeaderMenuLink {
 
 export const menuLinks: HeaderMenuLink[] = [
   {
-    label: "Current Game",
-    href: "/game",
+    label: "Current Contest",
+    href: "/contest",
     icon: <TrophyIcon className="h-4 w-4" />,
   },
   {
@@ -38,7 +38,7 @@ export const HeaderMenuLinks = () => {
               passHref
               className={`${
                 isActive ? "font-bold" : ""
-              } hover:bg-secondary hover:shadow-md focus:!bg-secondary active:!text-neutral py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col`}
+              } text-xl hover:bg-secondary hover:shadow-md focus:!bg-secondary active:!text-neutral py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col`}
             >
               {icon}
               <span>{label}</span>
@@ -87,7 +87,7 @@ export const Header = () => {
           )}
         </div>
         <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0">
-          <div className="font-cubano text-2xl mb-0">Vaults of Fortune</div>
+          <div className="font-cubano text-3xl mb-0">Vaults of Fortune</div>
         </Link>
         <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
           <HeaderMenuLinks />

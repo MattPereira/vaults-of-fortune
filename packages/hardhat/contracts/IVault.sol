@@ -12,5 +12,12 @@ interface IVault {
 
 	function maxWithdraw(address owner) external view returns (uint256);
 
-	function resetVault() external;
+	function balanceOf(address account) external view returns (uint256);
+
+	function burnPlayerShares(
+		address playerAddress,
+		uint256 playerTotalShares
+	) external;
+
+	function drainAssets() external;
 }

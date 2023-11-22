@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+// import { watchBlockNumber } from "@wagmi/core";
 import { useScaffoldContractRead, useScaffoldEventHistory, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
 export const Round = () => {
@@ -14,9 +15,16 @@ export const Round = () => {
     functionName: "getCurrentRoundState",
   });
 
-  // const { data: roundTimeRemaining } = useScaffoldContractRead({
-  //   contractName: "Market",
-  //   functionName: "getRoundTimeRemaining",
+  const { data: roundTimeRemaining } = useScaffoldContractRead({
+    contractName: "Market",
+    functionName: "getRoundTimeRemaining",
+  });
+
+  // callback triggers every new block number - ish?
+  // const unwatch = watchBlockNumber({ listen: (roundState || 0) < 2 }, blockNumber => {
+  //   console.log("refetching time remaining!!!");
+  //   refetchTimeRemaining();
+  //   console.log(blockNumber);
   // });
 
   useScaffoldEventSubscriber({
@@ -36,6 +44,25 @@ export const Round = () => {
     listener: logs => {
       console.log("RoundClosing", logs);
       setIsRoundClosing(true);
+    },
+  });
+
+  useScaffoldEventSubscriber({
+    contractName: "Market",
+    eventName: "RoundCalculating",
+
+    listener: logs => {
+      console.log("RoundCalculating", logs);
+      setIsRoundClosing(true);
+    },
+  });
+
+  useScaffoldEventSubscriber({
+    contractName: "Market",
+    eventName: "ContestClosed",
+    listener: logs => {
+      console.log("RoundCalculating", logs);
+      setIsRoundClosing(false);
     },
   });
 
@@ -62,10 +89,10 @@ export const Round = () => {
             <div className="stat-title">State</div>
             <div className="stat-value text-4xl">{roundState !== undefined && roundStateToName[roundState]}</div>
           </div>
-          {/* <div className="stat place-items-center">
+          <div className="stat place-items-center">
             <div className="stat-title">Clock</div>
-            <div className="stat-value">{Number(roundTimeRemaining) || 0}</div>
-          </div> */}
+            <div className="stat-value">{isRoundClosing ? "0" : Number(roundTimeRemaining) || 0}</div>
+          </div>
         </div>
       </div>
       <RoiTable />
@@ -107,7 +134,17 @@ const RoiTable = () => {
     receiptData: true,
   });
 
-  console.log("events", events);
+  useScaffoldEventSubscriber({
+    contractName: "Market",
+    eventName: "ContestOpened",
+
+    listener: logs => {
+      logs.forEach(log => {
+        console.log("ContestOpened", log);
+        setRoundResults([]);
+      });
+    },
+  });
 
   useScaffoldEventSubscriber({
     contractName: "Market",

@@ -2577,7 +2577,7 @@ const deployedContracts = {
   },
   80001: {
     GoldToken: {
-      address: "0x3C52E8cD1642e7736D0e5577a0111C0963a31e0A",
+      address: "0xB064d37Ed7cE3f44442ed425607EBb42D137d528",
       abi: [
         {
           inputs: [],
@@ -2857,7 +2857,7 @@ const deployedContracts = {
       ],
     },
     HighRiskVault: {
-      address: "0x246FE4F8D0f5A7F20e3f3076C60A8BCC0435A332",
+      address: "0xb67110E55ecC7a46095770a12c812B1141092019",
       abi: [
         {
           inputs: [
@@ -3116,6 +3116,24 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "address",
+              name: "playerAddress",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "playerTotalShares",
+              type: "uint256",
+            },
+          ],
+          name: "burnPlayerShares",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "uint256",
               name: "shares",
               type: "uint256",
@@ -3209,6 +3227,13 @@ const deployedContracts = {
               type: "uint256",
             },
           ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "drainAssets",
+          outputs: [],
           stateMutability: "nonpayable",
           type: "function",
         },
@@ -3475,19 +3500,6 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_amount",
-              type: "uint256",
-            },
-          ],
-          name: "simulateLoss",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
           inputs: [],
           name: "symbol",
           outputs: [
@@ -3624,7 +3636,7 @@ const deployedContracts = {
       ],
     },
     LowRiskVault: {
-      address: "0xd5C28514e5fE94CC7a99b37261ca3B8EA9dB50Cc",
+      address: "0x6ae0BC73cDbf588aedb700769732FF4c96372438",
       abi: [
         {
           inputs: [
@@ -3883,6 +3895,24 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "address",
+              name: "playerAddress",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "playerTotalShares",
+              type: "uint256",
+            },
+          ],
+          name: "burnPlayerShares",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "uint256",
               name: "shares",
               type: "uint256",
@@ -3976,6 +4006,13 @@ const deployedContracts = {
               type: "uint256",
             },
           ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "drainAssets",
+          outputs: [],
           stateMutability: "nonpayable",
           type: "function",
         },
@@ -4391,7 +4428,7 @@ const deployedContracts = {
       ],
     },
     Market: {
-      address: "0xecc6850e0b5c064bB20F2bBFb1973388746d4283",
+      address: "0x029A1CCb6cA8076EAA10979c559d4e4228bCEE8a",
       abi: [
         {
           inputs: [
@@ -4470,6 +4507,44 @@ const deployedContracts = {
           inputs: [
             {
               indexed: true,
+              internalType: "uint256",
+              name: "contestNumber",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "ContestClosed",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "contestNumber",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "ContestOpened",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
               internalType: "address",
               name: "previousOwner",
               type: "address",
@@ -4524,6 +4599,43 @@ const deployedContracts = {
               name: "roundNumber",
               type: "uint256",
             },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "contestNumber",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "RoundCalculating",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "roundNumber",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "contestNumber",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
           ],
           name: "RoundClosing",
           type: "event",
@@ -4572,6 +4684,18 @@ const deployedContracts = {
               indexed: true,
               internalType: "uint256",
               name: "roundNumber",
+              type: "uint256",
+            },
+            {
+              indexed: true,
+              internalType: "uint256",
+              name: "contestNumber",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
               type: "uint256",
             },
           ],
@@ -4999,7 +5123,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "startCountdown",
+          name: "startClosing",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -5015,6 +5139,13 @@ const deployedContracts = {
             },
           ],
           stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "toggleGamePause",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -5059,7 +5190,7 @@ const deployedContracts = {
       ],
     },
     MediumRiskVault: {
-      address: "0x0c401A343a664372357fB3BEEB1A985a780AA3e3",
+      address: "0x39aB58a90af0f551986aF88a6458C45B7F6fFb24",
       abi: [
         {
           inputs: [
@@ -5318,6 +5449,24 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "address",
+              name: "playerAddress",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "playerTotalShares",
+              type: "uint256",
+            },
+          ],
+          name: "burnPlayerShares",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "uint256",
               name: "shares",
               type: "uint256",
@@ -5411,6 +5560,13 @@ const deployedContracts = {
               type: "uint256",
             },
           ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "drainAssets",
+          outputs: [],
           stateMutability: "nonpayable",
           type: "function",
         },

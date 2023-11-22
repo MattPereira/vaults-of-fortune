@@ -8,7 +8,7 @@ interface IPlayerScores {
   contestNumber: number | undefined;
   roundNumber: number | undefined;
   player: string | undefined;
-  totalAssets: number | undefined;
+  totalAssets: number;
   blockNumber: bigint;
 }
 
@@ -33,6 +33,18 @@ export const Leaderboard = () => {
     filters: {
       contestNumber: currentContestNumber,
       roundNumber: currentRoundNumber,
+    },
+  });
+
+  useScaffoldEventSubscriber({
+    contractName: "Market",
+    eventName: "ContestOpened",
+
+    listener: logs => {
+      logs.forEach(log => {
+        console.log("ContestOpened", log);
+        setPlayersScores([]);
+      });
     },
   });
 
@@ -65,6 +77,7 @@ export const Leaderboard = () => {
               // Replace the existing entry with the new one
               const updatedScores = [...prevScores];
               updatedScores[existingIndex] = newScore;
+              updatedScores.sort((a, b) => b.totalAssets - a.totalAssets);
               return updatedScores;
             } else {
               // Keep the array as it is if the existing event is more recent
@@ -72,7 +85,7 @@ export const Leaderboard = () => {
             }
           } else {
             // Add the new score if the player is not already in the array
-            return [...prevScores, newScore];
+            return [...prevScores, newScore].sort((a, b) => b.totalAssets - a.totalAssets);
           }
         });
       });
@@ -83,7 +96,7 @@ export const Leaderboard = () => {
 
   useEffect(() => {
     if (!playersScores?.length && !!events?.length && !isLoadingEvents) {
-      const unsortedScores = events.map(event => {
+      const rawScores: IPlayerScores[] = events.map(event => {
         const { args, log } = event;
         console.log("event", event);
         return {
@@ -95,7 +108,22 @@ export const Leaderboard = () => {
         };
       });
 
-      const sortedScores = unsortedScores.sort((a, b) => {
+      const uniquePlayerScores = rawScores.reduce<Record<string, IPlayerScores>>((acc, item) => {
+        // Check if this player already exists in the accumulator
+
+        if (item.player) {
+          if (!acc[item.player] || acc[item.player].blockNumber < item.blockNumber) {
+            // If not present, or if the current item's blockNumber is greater, store it
+            acc[item.player] = item;
+          }
+        }
+
+        return acc;
+      }, {});
+
+      const playerScores = Object.values(uniquePlayerScores);
+
+      const sortedScores = playerScores.sort((a, b) => {
         return b.totalAssets - a.totalAssets;
       });
       setPlayersScores(sortedScores);
