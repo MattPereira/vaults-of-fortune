@@ -314,12 +314,12 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	 */
 
 	function fulfillRandomWords(
-		uint256 /* requestId */,
-		uint256[] memory randomWords
+		uint256 /* _requestId */,
+		uint256[] memory _randomWords
 	) internal override {
-		int256 lowVaultROI = manageVault(lowRiskVault, randomWords[0]);
-		int256 mediumVaultROI = manageVault(mediumRiskVault, randomWords[1]);
-		int256 highVaultROI = manageVault(highRiskVault, randomWords[2]);
+		int256 lowVaultROI = manageVault(lowRiskVault, _randomWords[0]);
+		int256 mediumVaultROI = manageVault(mediumRiskVault, _randomWords[1]);
+		int256 highVaultROI = manageVault(highRiskVault, _randomWords[2]);
 
 		emit RoundROIResults(
 			currentContest.number,

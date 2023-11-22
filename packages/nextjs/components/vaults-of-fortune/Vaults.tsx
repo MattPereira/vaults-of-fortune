@@ -199,7 +199,7 @@ export const Vaults = () => {
                   {vaultDeposit[vault.key].showInterface ? (
                     <>
                       <div className="text-xl text-center bg-base-200 py-3 rounded-xl">
-                        {Number(vault.depositAmount).toFixed(1)} GLD
+                        {Number(vault.depositAmount).toFixed(1)}
                       </div>
                       <div className="flex items-center gap-4 my-5">
                         <div className="text-xl text-center">{vaultDeposit[vault.key].percentage}%</div>
@@ -246,7 +246,7 @@ export const Vaults = () => {
                   ) : (
                     <>
                       <div className="text-xl text-center bg-base-200 py-3 rounded-xl">
-                        {Number(vault.withdrawAmount).toFixed(1)} GLD
+                        {Number(vault.withdrawAmount).toFixed(1)}
                       </div>
 
                       <div className="flex items-center gap-4 my-5">

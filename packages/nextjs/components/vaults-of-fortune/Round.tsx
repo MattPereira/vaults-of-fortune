@@ -15,6 +15,8 @@ export const Round = () => {
     functionName: "getCurrentRoundState",
   });
 
+  const closingOrCalculating = roundState === 1 || roundState === 2;
+
   const { data: roundTimeRemaining } = useScaffoldContractRead({
     contractName: "Market",
     functionName: "getRoundTimeRemaining",
@@ -85,7 +87,7 @@ export const Round = () => {
             <div className="stat-value text-4xl">{roundNumber?.toString()} of 3</div>
           </div>
 
-          <div className={`stat place-items-center ${isRoundClosing && "body-glow"}`}>
+          <div className={`stat place-items-center ${closingOrCalculating && "body-glow"}`}>
             <div className="stat-title">State</div>
             <div className="stat-value text-4xl">{roundState !== undefined && roundStateToName[roundState]}</div>
           </div>

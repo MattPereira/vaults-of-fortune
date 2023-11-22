@@ -18,7 +18,7 @@ const networkConfig: { [key: number]: NetworkConfigEntryTypes } = {
     keyHash: "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f",
     subscriptionId: "6468", // https://vrf.chain.link/mumbai
     requestConfirmations: "3", // 3 is mininum allowed
-    callbackGasLimit: "500000", // 500,000
+    callbackGasLimit: "2250000", // 2,255,000 (must be less than max of 2.5 million)
   },
 };
 

@@ -2577,7 +2577,7 @@ const deployedContracts = {
   },
   80001: {
     GoldToken: {
-      address: "0xB064d37Ed7cE3f44442ed425607EBb42D137d528",
+      address: "0xd22D749C242B69f2865B53C6ce8E51d1b84E740A",
       abi: [
         {
           inputs: [],
@@ -2857,7 +2857,7 @@ const deployedContracts = {
       ],
     },
     HighRiskVault: {
-      address: "0xb67110E55ecC7a46095770a12c812B1141092019",
+      address: "0xC6b6A4aA627464E3a67096FE6CA31F5C107ab345",
       abi: [
         {
           inputs: [
@@ -3636,7 +3636,7 @@ const deployedContracts = {
       ],
     },
     LowRiskVault: {
-      address: "0x6ae0BC73cDbf588aedb700769732FF4c96372438",
+      address: "0x89c4A89A0EB567472735CD90DF3AeBC2b4ca90CE",
       abi: [
         {
           inputs: [
@@ -4428,7 +4428,7 @@ const deployedContracts = {
       ],
     },
     Market: {
-      address: "0x029A1CCb6cA8076EAA10979c559d4e4228bCEE8a",
+      address: "0xFAB49806308c19125bd2793fA2d1d3AA505F55b9",
       abi: [
         {
           inputs: [
@@ -4885,6 +4885,30 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_requestId",
+              type: "uint256",
+            },
+          ],
+          name: "getRequestStatus",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "fulfilled",
+              type: "bool",
+            },
+            {
+              internalType: "uint256[]",
+              name: "randomWords",
+              type: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [],
           name: "getRoundTimeRemaining",
           outputs: [
@@ -4937,6 +4961,19 @@ const deployedContracts = {
               internalType: "bytes32",
               name: "",
               type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "lastRequestId",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
             },
           ],
           stateMutability: "view",
@@ -5190,7 +5227,7 @@ const deployedContracts = {
       ],
     },
     MediumRiskVault: {
-      address: "0x39aB58a90af0f551986aF88a6458C45B7F6fFb24",
+      address: "0xBCa1c33B49746AD82656B3EDDfB5842d143ca3F4",
       abi: [
         {
           inputs: [
