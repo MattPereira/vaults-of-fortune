@@ -37,7 +37,7 @@ const Debug: NextPage = () => {
                 {contractNames.map(contractName => (
                   <button
                     className={`btn btn-secondary btn-sm normal-case font-thin ${
-                      contractName === selectedContract ? "bg-base-300" : "bg-base-100"
+                      contractName === selectedContract ? "bg-white text-primary-content" : "bg-base-100"
                     }`}
                     key={contractName}
                     onClick={() => setSelectedContract(contractName)}
@@ -57,7 +57,7 @@ const Debug: NextPage = () => {
           </>
         )}
       </div>
-      <div className="text-center mt-8 bg-secondary p-10">
+      <div className="text-center mt-8 bg-base-200 p-10">
         <h1 className="text-4xl my-0">Debug Contracts</h1>
         <p className="text-neutral">
           You can debug & interact with your deployed contracts here.

@@ -81,7 +81,7 @@ export const Round = () => {
     <>
       <div className="mb-5">
         <h3 className="text-center text-3xl xl:text-4xl font-cubano mb-8">Round</h3>
-        <div className="stats shadow w-full bg-base-200">
+        <div className="stats w-full bg-base-200 border border-base-200">
           <div className="stat place-items-center">
             <div className="stat-title">Number</div>
             <div className="stat-value text-4xl">{roundNumber?.toString()} of 3</div>
@@ -200,7 +200,7 @@ const RoiTable = () => {
     <div className="overflow-x-auto">
       <table className="table text-xl">
         <thead>
-          <tr className="text-xl">
+          <tr className="text-xl border-b border-white">
             <th>Round</th>
             <th>Low</th>
             <th>Med</th>

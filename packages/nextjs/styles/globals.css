@@ -7,7 +7,7 @@
 
 :root,
 [data-theme] {
-  background: hsl(var(--b2));
+  background: hsl(var(--b3));
 }
 
 body {

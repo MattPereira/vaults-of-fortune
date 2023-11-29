@@ -11,16 +11,15 @@ const Home: NextPage = () => {
     <>
       <MetaHeader />
       <div className="bg-base-300 grow px-5 md:px-10 xl:px-20">
-        <h1 className="font-cubano text-4xl md:text-6xl xl:text-7xl text-center my-14 lg:my-24"> Vaults of Fortune</h1>
+        <h1 className="font-cubano text-4xl md:text-6xl xl:text-6xl text-center my-14 lg:my-20"> Vaults of Fortune</h1>
 
-        <div className="grid grid-cols-1 xl:grid-cols-8 gap-14 items-center justify-center my-14">
-          <div className="col-span-8 xl:col-span-3 flex justify-center">
-            <Image src="/vault.png" width="500" height="500" alt="cartoon vault" />
+        <div className="grid grid-cols-1 2xl:grid-cols-2 gap-8 items-center">
+          <div>
+            <Image src="/banner.png" width="1000" height="1000" alt="vaults of fortune banner" />
           </div>
-
-          <div className=" col-span-8 xl:col-span-5">
-            <h2 className="font-cubano text-4xl mb-5 text-center">How to Play</h2>
-            <div className="bg-base-200 rounded-xl py-10 pl-10 lg:pl-20 pr-5 lg:pr-10">
+          <div className="">
+            <h2 className="font-cubano text-4xl text-center">How to Play</h2>
+            <div className="rounded-xl py-10 pl-10 lg:pl-20 pr-5 lg:pr-10">
               <ol className="text-2xl list-decimal list-outside">
                 <li className="mb-5">Enter a contest to be airdropped 10,000 GLD tokens</li>
                 <li className="mb-5">
@@ -38,12 +37,16 @@ const Home: NextPage = () => {
                 <li className="mb-0">Highest net worth at the end of round 3 is the winner</li>
               </ol>
             </div>
-            <div className="flex justify-center mt-5">
-              <Link className="btn btn-accent btn-lg capitalize px-10" href="/contest">
-                Go to Contest
-              </Link>
-            </div>
           </div>
+        </div>
+
+        <div className="flex justify-center my-10 lg:my-20">
+          <Link
+            className="bg-primary text-primary-content px-20 rounded-full text-3xl font-cubano py-8 capitalize"
+            href="/contest"
+          >
+            Play Now
+          </Link>
         </div>
       </div>
     </>

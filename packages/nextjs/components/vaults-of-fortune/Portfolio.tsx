@@ -122,7 +122,7 @@ export const Portfolio = () => {
     <>
       {isPlayer ? (
         <>
-          <h3 className="text-white text-center font-cubano text-3xl xl:text-4xl mb-8">Portfolio</h3>
+          <h3 className="text-center font-cubano text-3xl xl:text-4xl mb-8">Portfolio</h3>
 
           <div className="flex justify-center">
             <div className="w-[300px] h-[300px] relative">
@@ -144,11 +144,11 @@ export const Portfolio = () => {
               )}
             </div>
           </div>
-          <div className="text-center text-2xl mt-3">{formatEther(userGoldBalance || 0n)} GLD tokens </div>
+          {/* <div className="text-center text-2xl mt-3">{formatEther(userGoldBalance || 0n)} GLD tokens </div> */}
         </>
       ) : (
         <div className="text-center h-full flex flex-col justify-center items-center">
-          <button className="w-48 capitalize text-xl btn btn-accent px-5" onClick={() => enterContest()}>
+          <button className="w-48 capitalize text-xl btn btn-primary btn-lg px-5" onClick={() => enterContest()}>
             Enter Contest
           </button>
         </div>

@@ -72,7 +72,7 @@ const CurrentContest: NextPage = () => {
       <MetaHeader />
 
       <div className="bg-base-300 min-h-[468px]">
-        <div className="rounded-xl grid grid-cols-1 2xl:grid-cols-3 gap-14 p-14">
+        <div className="rounded-xl grid grid-cols-1 2xl:grid-cols-3 gap-14 p-5 lg:p-14">
           <div>
             <Leaderboard />
           </div>
@@ -84,7 +84,7 @@ const CurrentContest: NextPage = () => {
           </div>
         </div>
       </div>
-      <div className="p-5 xl:p-14 bg-base-300 grow">
+      <div className="p-5 xl:px-14 py-5 grow py-0">
         <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-14">
           <Vaults />
         </div>

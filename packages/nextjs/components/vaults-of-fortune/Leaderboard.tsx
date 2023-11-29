@@ -136,7 +136,7 @@ export const Leaderboard = () => {
       <div className="overflow-x-auto">
         <table className="table text-xl">
           <thead>
-            <tr className="text-xl">
+            <tr className="text-xl border-b border-white">
               <th>Pos</th>
               <th>Player</th>
               <th>Total Assets</th>
@@ -145,7 +145,7 @@ export const Leaderboard = () => {
           <tbody>
             {playersScores.map((score, idx) => {
               return (
-                <tr key={score.player}>
+                <tr key={score.player} className="border-b border-[#FFFFFF33]">
                   <th>{idx + 1}</th>
                   <td>
                     <Address size="lg" address={score.player} />
