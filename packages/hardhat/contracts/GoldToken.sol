@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
  */
 
 contract GoldToken is ERC20 {
-	constructor() ERC20("Gold Token", "GLD") {
+	constructor() ERC20("Godl Token", "GODL") {
 		// mint 1 billion GLD tokens to the deployer of this contract
 		_mint(msg.sender, 1000000000 * 10 ** 18);
 	}

@@ -23,7 +23,7 @@ contract LowRiskVault is ERC4626, Ownable {
 
 	constructor(
 		IERC20 _asset
-	) ERC4626(_asset) Ownable() ERC20("Low Risk Vault Token", "lvGLD") {}
+	) ERC4626(_asset) Ownable() ERC20("Low Risk Vault Token", "lvGODL") {}
 
 	/**
 	 * @param amount the amount of assets removed from this vault by market contract

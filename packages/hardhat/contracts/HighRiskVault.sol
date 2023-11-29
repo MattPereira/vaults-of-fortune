@@ -24,7 +24,7 @@ contract HighRiskVault is Ownable, ERC4626 {
 
 	constructor(
 		IERC20 _asset
-	) ERC4626(_asset) Ownable() ERC20("Low Risk Vault Token", "lvGLD") {}
+	) ERC4626(_asset) Ownable() ERC20("High Risk Vault Token", "hvGODL") {}
 
 	/**
 	 * @param amount the amount of assets removed from this vault by market contract

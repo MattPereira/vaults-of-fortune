@@ -32,7 +32,7 @@ export const Footer = () => {
             <SwitchTheme className={`pointer-events-auto ${isLocalNetwork ? "self-end md:self-auto" : ""}`} />
           </div>
           <div className="text-xl border px-2 rounded-md py-1">
-            Your Gold Reserves: {formatEther(userGoldBalance || 0n)}
+            Your <span className="text-yellow-400">GODL</span> Reserves: {formatEther(userGoldBalance || 0n)}
           </div>
         </div>
       </div>
