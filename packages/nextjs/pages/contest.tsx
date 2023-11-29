@@ -92,7 +92,7 @@ const CurrentContest: NextPage = () => {
 
       {showRoundStartModal && (
         <div className="modal modal-open">
-          <div className="modal-box">
+          <div className="modal-box bg-white text-primary-content">
             <h3 className="font-cubano text-3xl text-center mb-5">Round {roundNumber} Started!</h3>
             <p className="text-center text-xl">Allocate your funds before the clock runs out!</p>
             <div className="modal-action">
@@ -106,7 +106,7 @@ const CurrentContest: NextPage = () => {
 
       {showRoundClosingModal && (
         <div className="modal modal-open">
-          <div className="modal-box bg-red-600">
+          <div className="modal-box bg-white">
             <h3 className="font-cubano text-3xl text-center mb-5">Round Closing Soon!!!</h3>
             <p className="text-center text-xl">
               In order to generate a return on investment for this round, your funds must be allocated into the vaults
@@ -123,22 +123,24 @@ const CurrentContest: NextPage = () => {
 
       {isRoundEnd && (
         <div className="modal modal-open">
-          <div className="modal-box p-5">
-            <h3 className="font-cubano text-3xl text-center mb-5">End of Round {roundResults.roundNumber}</h3>
+          <div className="modal-box p-5 bg-white">
+            <h3 className="font-cubano text-3xl text-center text-primary-content mb-5">
+              End of Round {roundResults.roundNumber}
+            </h3>
             <div className="overflow-x-auto">
               <table className="table text-xl bg-base-300">
                 <thead>
-                  <tr className="text-xl">
+                  <tr className="text-xl border-b border-white">
                     <th>Vault</th>
                     <th>ROI</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
+                  <tr className="border-b border-[#FFFFFF33]">
                     <th>Low Risk</th>
                     <td>{roundResults.lowRiskVaultROI}%</td>
                   </tr>
-                  <tr>
+                  <tr className="border-b border-[#FFFFFF33]">
                     <th>Medium Risk</th>
                     <td>{roundResults.mediumRiskVaultROI}%</td>
                   </tr>

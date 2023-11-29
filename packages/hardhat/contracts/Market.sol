@@ -305,6 +305,16 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		);
 	}
 
+	function emergencyRequestRandomWords() external onlyOwner {
+		vrfCoordinator.requestRandomWords(
+			keyHash,
+			subscriptionId,
+			requestConfirmations,
+			callbackGasLimit,
+			numWords
+		);
+	}
+
 	/** Triggered by the VRF Coordinator that gets triggered by performUpkeep
 	 *
 	 * 1. Distribute/Take tokens to/from the vaults according to random numbers provided by VRF

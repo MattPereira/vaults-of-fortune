@@ -140,10 +140,12 @@ export const Vaults = () => {
               <h2 className="mb-3 ml-3 text-3xl xl:text-4xl font-cubano text-center">{vault.title}</h2>
               <div>
                 <h6 className="text-center text-xl mb-3 bg-base-200 py-5 rounded-xl w-40">
-                  <span className={`mr-1 ${Number(vault.minimumROI) < 0 ? "text-red-500" : "text-green-500"}`}>
+                  <span
+                    className={`mr-1 font-bold ${Number(vault.minimumROI) < 0 ? "text-red-500" : "text-green-500"}`}
+                  >
                     {Number(vault.minimumROI) || 0}%
                   </span>{" "}
-                  to <span className="text-green-500 ml-1">{Number(vault.maximumROI) || 0}%</span>
+                  to <span className="text-green-500 font-bold ml-1">{Number(vault.maximumROI) || 0}%</span>
                 </h6>
               </div>
             </div>
