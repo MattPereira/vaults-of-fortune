@@ -15,8 +15,8 @@ const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT
 
 export const MetaHeader = ({
   title = "Vaults of Fortune",
-  description = "Compete for the highest return on investment over 3 rounds",
-  image = "thumbnail.png",
+  description = "Compete for the highest return on investment over 3 rounds by depositing GODL into ERC-4626 vaults where the rate of return is determined by Chainlink VRF",
+  image = "thumbnail.jpg",
   twitterCard = "summary_large_image",
   children,
 }: MetaHeaderProps) => {
