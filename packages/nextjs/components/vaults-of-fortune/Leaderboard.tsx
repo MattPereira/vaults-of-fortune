@@ -65,15 +65,25 @@ const balanceOfABI = [
   },
 ];
 
+const lowAddr = "0xFd22CFe7977ec28909e3f4867dF9962Ce5BFD861";
+const mediumAddr = "0xFe3f176aDC15008d3e79181803a689572b8D3730";
+const highAddr = "0xbDD01425dC5B72b84730411d344359Bf667BA6AA";
+const goldAddr = "0x85D3B09cbA4f5994102435caD33f27f00E7f00CB";
+const marketAddr = "0x51f83e8653e198A089c41F61f8De1791140a9d03";
+
 export const Leaderboard = () => {
   const [playersAssets, setPlayersAssets] = useState<IPlayersAssets[]>([]);
   const publicClient = usePublicClient();
   const { data: MarketContract } = useDeployedContractInfo("Market");
+  const { data: LowRiskContract } = useDeployedContractInfo("LowRiskVault");
+  const { data: MediumRiskContract } = useDeployedContractInfo("MediumRiskVault");
+  const { data: HighRiskContract } = useDeployedContractInfo("HighRiskVault");
+  const { data: GoldContract } = useDeployedContractInfo("GoldToken");
 
   useEffect(() => {
     async function getPlayers() {
       const players = await publicClient.readContract({
-        address: MarketContract?.address || "0x537cc9F7dd8ec7B0423021d61668De0DDA9079ed",
+        address: MarketContract?.address || marketAddr,
         abi: [
           {
             inputs: [],
@@ -94,28 +104,28 @@ export const Leaderboard = () => {
 
       const scores = players.map(async player => {
         const lowRiskAssets = (await publicClient.readContract({
-          address: "0x81f731219A738DEB8Eb3cF5496E99d5a5cbe53D5",
+          address: LowRiskContract?.address || lowAddr,
           abi: maxWithdrawABI,
           functionName: "maxWithdraw",
           args: [player],
         })) as bigint;
 
         const mediumRiskAssets = (await publicClient.readContract({
-          address: "0x6FEbe74C84219a6560683e4c89ed8AdeCe5F3301",
+          address: MediumRiskContract?.address || mediumAddr,
           abi: maxWithdrawABI,
           functionName: "maxWithdraw",
           args: [player],
         })) as bigint;
 
         const highRiskAssets = (await publicClient.readContract({
-          address: "0x359d9fD1a6d8d3c4483eFf5323e49450CbcB5ff7",
+          address: HighRiskContract?.address || highAddr,
           abi: maxWithdrawABI,
           functionName: "maxWithdraw",
           args: [player],
         })) as bigint;
 
         const goldBalance = (await publicClient.readContract({
-          address: "0x1A9b869fdB9Ecc7Ae1998447c0EBf19E260C8b7d",
+          address: GoldContract?.address || goldAddr,
           abi: balanceOfABI,
           functionName: "balanceOf",
           args: [player],
@@ -138,11 +148,11 @@ export const Leaderboard = () => {
         return 0;
       });
       setPlayersAssets(playerScores);
-      console.log("playerScores", formatEther(playerScores[0].totalAssets));
+      // console.log("playerScores", formatEther(playerScores[0].totalAssets));
     }
 
     getPlayers();
-  }, [publicClient, MarketContract]);
+  }, [publicClient, MarketContract, LowRiskContract, MediumRiskContract, HighRiskContract, GoldContract]);
 
   console.log("playersAssets", playersAssets);
 
