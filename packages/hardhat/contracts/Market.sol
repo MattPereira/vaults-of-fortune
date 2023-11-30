@@ -340,7 +340,6 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		);
 
 		if (currentRound.number < 3) {
-			// prepare for next round
 			currentRound.number += 1;
 			currentRound.state = RoundState.OPEN;
 			lastTimestamp = block.timestamp;
@@ -350,7 +349,6 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 				block.timestamp
 			);
 		} else {
-			// ends the contest
 			currentRound.state = RoundState.CLOSED;
 			currentContest.state = ContestState.CLOSED;
 			emit ContestClosed(currentContest.number, block.timestamp);

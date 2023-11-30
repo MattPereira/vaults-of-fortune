@@ -139,7 +139,7 @@ export const Vaults = () => {
             <div className="flex justify-between items-center mb-3 gap-5 xl:gap-10">
               <h2 className="mb-3 ml-3 text-3xl xl:text-4xl font-cubano text-center">{vault.title}</h2>
               <div>
-                <h6 className="text-center text-xl mb-3 bg-base-200 py-5 rounded-xl w-40">
+                <h6 className="text-center text-2xl mb-3 bg-base-200 py-5 rounded-xl w-44">
                   <span
                     className={`mr-1 font-bold ${Number(vault.minimumROI) < 0 ? "text-red-500" : "text-green-500"}`}
                   >

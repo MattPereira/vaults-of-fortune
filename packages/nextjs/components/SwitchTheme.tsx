@@ -26,7 +26,7 @@ export const SwitchTheme = ({ className }: { className?: string }) => {
         href="https://mumbaifaucet.com/"
         target="_blank"
         rel="noopener noreferrer"
-        className="btn btn-outline rounded-md btn-sm text-lg capitalize"
+        className="btn btn-primary rounded-md btn-sm text-lg capitalize"
       >
         Mumbai Faucet
       </a>

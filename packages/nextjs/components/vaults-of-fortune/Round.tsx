@@ -128,13 +128,15 @@ const RoiTable = () => {
     contractName: "Market",
     eventName: "RoundROIResults",
     // Specify the starting block number from which to read events, this is a bigint.
-    fromBlock: 0n,
+    fromBlock: 43000000n,
     blockData: true,
     // Apply filters to the event based on parameter names and values { [parameterName]: value },
     filters: { contestNumber: currentContest },
     transactionData: true,
     receiptData: true,
   });
+
+  console.log("ROUND ROI events", events);
 
   useScaffoldEventSubscriber({
     contractName: "Market",

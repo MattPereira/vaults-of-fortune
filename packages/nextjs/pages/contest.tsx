@@ -30,8 +30,8 @@ const CurrentContest: NextPage = () => {
     listener: logs => {
       logs.map(log => {
         const { roundNumber } = log.args;
-        setShowRoundStartModal(true);
         setRoundNumber(Number(roundNumber));
+        setShowRoundStartModal(true);
       });
     },
   });
