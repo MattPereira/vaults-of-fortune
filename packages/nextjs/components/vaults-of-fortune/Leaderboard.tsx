@@ -277,7 +277,7 @@ export const Leaderboard = () => {
   return (
     <div>
       <h3 className="text-center text-3xl xl:text-4xl mb-8 font-cubano">Leaderboard</h3>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto overflow-y-auto h-[325px]">
         <table className="table text-xl">
           <thead>
             <tr className="text-xl border-b border-white">

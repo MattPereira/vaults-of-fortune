@@ -209,7 +209,7 @@ const RoiTable = () => {
         </thead>
         <tbody>
           {roundResults.map(result => (
-            <tr key={result.roundNumber}>
+            <tr key={result.roundNumber} className="border-b border-[#FFFFFF33]">
               <th>{result.roundNumber}</th>
               <td className={roiColor(result.lowRiskVaultROI)}>{result.lowRiskVaultROI}%</td>
               <td className={roiColor(result.mediumRiskVaultROI)}>{result.mediumRiskVaultROI}%</td>
