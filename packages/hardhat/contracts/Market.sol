@@ -357,19 +357,19 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		}
 
 		// emit event with each players updated total assets
-		for (uint i = 0; i < players.length; i++) {
-			address player = players[i];
-			uint256 totalAssets = lowRiskVault.maxWithdraw(player) +
-				mediumRiskVault.maxWithdraw(player) +
-				highRiskVault.maxWithdraw(player) +
-				token.balanceOf(player);
-			emit PlayerTotalAssetUpdate(
-				currentContest.number,
-				currentRound.number,
-				player,
-				totalAssets
-			);
-		}
+		// for (uint i = 0; i < players.length; i++) {
+		// 	address player = players[i];
+		// 	uint256 totalAssets = lowRiskVault.maxWithdraw(player) +
+		// 		mediumRiskVault.maxWithdraw(player) +
+		// 		highRiskVault.maxWithdraw(player) +
+		// 		token.balanceOf(player);
+		// 	emit PlayerTotalAssetUpdate(
+		// 		currentContest.number,
+		// 		currentRound.number,
+		// 		player,
+		// 		totalAssets
+		// 	);
+		// }
 	}
 
 	/** Uses random value to distribute/take tokens to/from the vaults
