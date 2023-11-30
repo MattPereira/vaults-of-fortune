@@ -128,7 +128,8 @@ const RoiTable = () => {
     contractName: "Market",
     eventName: "RoundROIResults",
     // Specify the starting block number from which to read events, this is a bigint.
-    fromBlock: 0n,
+    // fromBlock: 0n,
+    fromBlock: 43030910n,
     blockData: true,
     // Apply filters to the event based on parameter names and values { [parameterName]: value },
     filters: { contestNumber: currentContest },

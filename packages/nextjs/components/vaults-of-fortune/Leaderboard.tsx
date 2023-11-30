@@ -34,7 +34,8 @@ export const Leaderboard = () => {
   // const { data: events, isLoading: isLoadingEvents } = useScaffoldEventHistory({
   //   contractName: "Market",
   //   eventName: "PlayerTotalAssetUpdate",
-  //   fromBlock: 0n,
+  // fromBlock: 0n,
+  // fromBlock: 43030910n,
   //   // Apply filters to the event based on parameter names and values { [parameterName]: value },
   //   filters: {
   //     contestNumber: currentContestNumber,

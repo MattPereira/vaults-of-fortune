@@ -54,6 +54,7 @@ const CurrentContest: NextPage = () => {
     listener: logs => {
       logs.map(log => {
         const { contestNumber, roundNumber, lowRiskVaultROI, mediumRiskVaultROI, highRiskVaultROI } = log.args;
+        console.log("RoundROIResults EVENT SUBSCRIBER", log.args);
         setRoundResults(() => {
           return {
             contestNumber: Number(contestNumber),
