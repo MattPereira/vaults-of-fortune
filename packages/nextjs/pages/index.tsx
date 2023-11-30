@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { NextPage } from "next";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { MetaHeader } from "~~/components/MetaHeader";
 
 /** Homepage explains how the game works and offers enter contest button
@@ -48,10 +49,11 @@ const Home: NextPage = () => {
 
         <div className="flex justify-center my-10 lg:my-20">
           <Link
-            className="bg-primary text-primary-content px-20 rounded-full text-3xl font-cubano py-8 capitalize"
+            className="bg-[#4e389c51] hover:bg-[#4e389c69] hover:font-semibold border-2 border-[#6c4ed9ff] px-14 rounded-full text-3xl py-8 capitalize flex items-center gap-5"
             href="/contest"
           >
-            Play Now
+            Explore Vaults
+            <ArrowRightIcon className="w-7 h-7" />
           </Link>
         </div>
       </div>
