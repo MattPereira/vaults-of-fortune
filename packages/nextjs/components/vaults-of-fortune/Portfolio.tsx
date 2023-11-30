@@ -148,6 +148,7 @@ export const Portfolio = () => {
         </>
       ) : (
         <div className="text-center h-full flex flex-col justify-center items-center">
+          <p className="text-2xl mb-10">May the odds be ever in your favor</p>
           <button
             className="px-10 py-5 capitalize text-2xl rounded-full bg-[#4e389c51] hover:bg-[#4e389c69] hover:font-semibold border-2 border-[#6c4ed9ff]"
             onClick={() => enterContest()}

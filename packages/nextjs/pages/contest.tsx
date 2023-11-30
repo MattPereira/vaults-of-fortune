@@ -1,7 +1,8 @@
 import { useState } from "react";
+import Image from "next/image";
 import type { NextPage } from "next";
 import { MetaHeader } from "~~/components/MetaHeader";
-import { Leaderboard, Portfolio, Round, Vaults } from "~~/components/vaults-of-fortune/";
+import { Leaderboard, Modal, Portfolio, Round, Vaults } from "~~/components/vaults-of-fortune/";
 import { useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
 /** Homepage renders all of the child components and manages round start/end modals
@@ -91,39 +92,32 @@ const CurrentContest: NextPage = () => {
       </div>
 
       {showRoundStartModal && (
-        <div className="modal modal-open">
-          <div className="modal-box bg-white text-primary-content">
-            <h3 className="font-cubano text-3xl text-center mb-5">Round {roundNumber} Started!</h3>
-            <p className="text-center text-xl">Allocate your funds before the clock runs out!</p>
-            <div className="modal-action">
-              <button className="btn" onClick={() => setShowRoundStartModal(false)}>
-                Close
-              </button>
+        <Modal isOpen={showRoundStartModal} onClose={() => setShowRoundStartModal(false)}>
+          <div>
+            <h3 className="font-cubano text-4xl text-center mb-5">Round {roundNumber} Started</h3>
+            <div className="flex justify-center">
+              <Image src="/roundstart.png" width="350" height="350" alt="vaults of fortune banner" />
             </div>
+            <p className="text-center text-3xl">Allocate your funds before the clock runs out!</p>
           </div>
-        </div>
+        </Modal>
       )}
 
       {showRoundClosingModal && (
-        <div className="modal modal-open">
-          <div className="modal-box bg-white">
-            <h3 className="font-cubano text-3xl text-center mb-5">Round Closing Soon!!!</h3>
-            <p className="text-center text-xl">
+        <Modal isOpen={showRoundClosingModal} onClose={() => setShowRoundClosingModal(false)}>
+          <div>
+            <h3 className="font-cubano text-4xl text-center mb-5">Round Closing Soon</h3>
+            <p className="text-center text-2xl">
               In order to generate a return on investment for this round, your funds must be allocated into the vaults
               before chainlink VRF responds with the random numbers that determine vault ROIs
             </p>
-            <div className="modal-action">
-              <button className="btn" onClick={() => setShowRoundClosingModal(false)}>
-                Close
-              </button>
-            </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {isRoundEnd && (
-        <div className="modal modal-open">
-          <div className="modal-box p-5 bg-white">
+        <Modal isOpen={isRoundEnd} onClose={() => setIsRoundEnd(false)}>
+          <div>
             <h3 className="font-cubano text-3xl text-center text-primary-content mb-5">
               End of Round {roundResults.roundNumber}
             </h3>
@@ -151,13 +145,8 @@ const CurrentContest: NextPage = () => {
                 </tbody>
               </table>
             </div>
-            <div className="modal-action">
-              <button className="btn" onClick={() => setIsRoundEnd(false)}>
-                Close
-              </button>
-            </div>
           </div>
-        </div>
+        </Modal>
       )}
     </>
   );
