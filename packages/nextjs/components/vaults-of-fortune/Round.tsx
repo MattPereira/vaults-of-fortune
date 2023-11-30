@@ -81,7 +81,7 @@ export const Round = () => {
     <>
       <div className="mb-5">
         <h3 className="text-center text-3xl xl:text-4xl font-cubano mb-8">Round</h3>
-        <div className="stats w-full bg-[#FFFFFF15] border border-[#FFFFFF22]">
+        <div className="stats w-full bg-[#FFFFFF15] border border-[#FFFFFF88]">
           <div className="stat place-items-center">
             <div className="stat-title">Number</div>
             <div className="stat-value text-4xl">{roundNumber?.toString()} of 3</div>

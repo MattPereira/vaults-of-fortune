@@ -12,9 +12,9 @@ import { useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
  */
 
 const CurrentContest: NextPage = () => {
-  const [showRoundStartModal, setShowRoundStartModal] = useState(true);
-  const [showRoundClosingModal, setShowRoundClosingModal] = useState(true);
-  const [isRoundEnd, setIsRoundEnd] = useState(true);
+  const [showRoundStartModal, setShowRoundStartModal] = useState(false);
+  const [showRoundClosingModal, setShowRoundClosingModal] = useState(false);
+  const [isRoundEnd, setIsRoundEnd] = useState(false);
   const [roundNumber, setRoundNumber] = useState(0);
   const [roundResults, setRoundResults] = useState({
     contestNumber: 0,
