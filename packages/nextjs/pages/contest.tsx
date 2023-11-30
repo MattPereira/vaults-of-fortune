@@ -12,9 +12,9 @@ import { useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
  */
 
 const CurrentContest: NextPage = () => {
-  const [showRoundStartModal, setShowRoundStartModal] = useState(false);
-  const [showRoundClosingModal, setShowRoundClosingModal] = useState(false);
-  const [isRoundEnd, setIsRoundEnd] = useState(false);
+  const [showRoundStartModal, setShowRoundStartModal] = useState(true);
+  const [showRoundClosingModal, setShowRoundClosingModal] = useState(true);
+  const [isRoundEnd, setIsRoundEnd] = useState(true);
   const [roundNumber, setRoundNumber] = useState(0);
   const [roundResults, setRoundResults] = useState({
     contestNumber: 0,
@@ -105,11 +105,20 @@ const CurrentContest: NextPage = () => {
 
       {showRoundClosingModal && (
         <Modal isOpen={showRoundClosingModal} onClose={() => setShowRoundClosingModal(false)}>
-          <div>
-            <h3 className="font-cubano text-4xl text-center mb-5">Round Closing Soon</h3>
-            <p className="text-center text-2xl">
-              In order to generate a return on investment for this round, your funds must be allocated into the vaults
-              before chainlink VRF responds with the random numbers that determine vault ROIs
+          <div className="h-[550px] flex flex-col justify-center">
+            <h3 className="font-cubano text-4xl text-center mb-10">Round Closing Soon</h3>
+            <div className="flex justify-center mb-5">
+              <Image
+                src="/closing.png"
+                width="700"
+                height="700"
+                alt="vaults of fortune banner"
+                className="rounded-xl"
+              />
+            </div>
+
+            <p className="text-center text-2xl text-center">
+              Deposit your GODL before chainlink VRF responds with random numbers!
             </p>
           </div>
         </Modal>
@@ -118,32 +127,55 @@ const CurrentContest: NextPage = () => {
       {isRoundEnd && (
         <Modal isOpen={isRoundEnd} onClose={() => setIsRoundEnd(false)}>
           <div>
-            <h3 className="font-cubano text-3xl text-center text-primary-content mb-5">
+            <h3 className="font-cubano text-4xl text-center text-primary-content mb-5">
               End of Round {roundResults.roundNumber}
             </h3>
-            <div className="overflow-x-auto">
-              <table className="table text-xl bg-base-300">
-                <thead>
-                  <tr className="text-xl border-b border-white">
-                    <th>Vault</th>
-                    <th>ROI</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-[#FFFFFF33]">
-                    <th>Low Risk</th>
-                    <td>{roundResults.lowRiskVaultROI}%</td>
-                  </tr>
-                  <tr className="border-b border-[#FFFFFF33]">
-                    <th>Medium Risk</th>
-                    <td>{roundResults.mediumRiskVaultROI}%</td>
-                  </tr>
-                  <tr>
-                    <th>High Risk</th>
-                    <td>{roundResults.highRiskVaultROI}%</td>
-                  </tr>
-                </tbody>
-              </table>
+
+            <div className="h-[350px] flex flex-col justify-center">
+              <div className="flex justify-center">
+                <div className="overflow-x-auto text-base-content w-3/4">
+                  <table className="table text-xl bg-base-300">
+                    <thead>
+                      <tr className="text-xl border-b border-white">
+                        <th>Vault</th>
+                        <th>ROI</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-[#FFFFFF33]">
+                        <th>Low Risk</th>
+                        <td
+                          className={`font-bold ${
+                            roundResults.lowRiskVaultROI > 0 ? "text-green-500" : "text-red-500"
+                          }`}
+                        >
+                          {roundResults.lowRiskVaultROI}%
+                        </td>
+                      </tr>
+                      <tr className="border-b border-[#FFFFFF33]">
+                        <th>Medium Risk</th>
+                        <td
+                          className={`font-bold ${
+                            roundResults.lowRiskVaultROI > 0 ? "text-green-500" : "text-red-500"
+                          }`}
+                        >
+                          {roundResults.mediumRiskVaultROI}%
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>High Risk</th>
+                        <td
+                          className={`font-bold ${
+                            roundResults.lowRiskVaultROI > 0 ? "text-green-500" : "text-red-500"
+                          }`}
+                        >
+                          {roundResults.highRiskVaultROI}%
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </Modal>

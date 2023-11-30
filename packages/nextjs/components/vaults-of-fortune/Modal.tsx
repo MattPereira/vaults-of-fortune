@@ -16,7 +16,10 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
         {/* <div className="absolute inset-0 bg-black rounded-lg"></div> */}
         <div className="relative bg-white text-primary-content border border-base-200 rounded-lg p-7 max-w-5xl w-full">
           {children}
-          <XCircleIcon className="absolute top-4 right-4 w-10 h-10 hover:cursor-pointer" onClick={onClose} />
+          <XCircleIcon
+            className="absolute top-4 right-4 w-10 h-10 hover:cursor-pointer bg-black text-white rounded-full"
+            onClick={onClose}
+          />
         </div>
       </div>
     </div>
