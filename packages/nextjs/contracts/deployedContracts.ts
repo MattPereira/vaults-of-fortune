@@ -2577,7 +2577,7 @@ const deployedContracts = {
   },
   80001: {
     GoldToken: {
-      address: "0x03910EA285e741225a8eBd0046b8B12E1690C9a1",
+      address: "0x9bBB21510185147F21169875274c46e1B3F4D10B",
       abi: [
         {
           inputs: [],
@@ -2857,7 +2857,7 @@ const deployedContracts = {
       ],
     },
     HighRiskVault: {
-      address: "0x913CC2b11Cc3FC7237FB4751C0FF95e6B405191F",
+      address: "0x3eB80011273be4B82B26Cf9F3034F7f87c1ff7E6",
       abi: [
         {
           inputs: [
@@ -3649,7 +3649,7 @@ const deployedContracts = {
       ],
     },
     LowRiskVault: {
-      address: "0x5402d699E9FA1dA201E846097ee02eef0FE4B85f",
+      address: "0x1F90574a8934C9158c5DbB88F5b1faC77F5b667F",
       abi: [
         {
           inputs: [
@@ -4441,7 +4441,7 @@ const deployedContracts = {
       ],
     },
     Market: {
-      address: "0xB1D926d3543c1860bE69fee7f1D15A0C3EFB801D",
+      address: "0x76B223917B2338e78CADF49841d1863160551C45",
       abi: [
         {
           inputs: [
@@ -5203,7 +5203,7 @@ const deployedContracts = {
       ],
     },
     MediumRiskVault: {
-      address: "0x68A2600c7c2fF387B677Ce73fFC9a76302AB5Ec1",
+      address: "0x70add408740ad55A56bC46b92077B6bE3E5EF866",
       abi: [
         {
           inputs: [
