@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 // import { watchBlockNumber } from "@wagmi/core";
 import { useScaffoldContractRead, useScaffoldEventHistory, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
-export const Round = () => {
+export const Round: React.FC<{ showRoundCalculating: boolean; roundNumber: number }> = ({
+  showRoundCalculating,
+  roundNumber,
+}) => {
   // const [isRoundClosing, setIsRoundClosing] = useState(false);
 
   // const { data: roundNumber } = useScaffoldContractRead({
@@ -91,6 +94,12 @@ export const Round = () => {
         </div> */}
       </div>
       <RoiTable />
+
+      {showRoundCalculating && (
+        <div className="bg-base-200 border border-base-200 p-5 font-cubano mt-10 text-2xl text-center rounded-xl">
+          Round {roundNumber} calculating...
+        </div>
+      )}
     </>
   );
 };

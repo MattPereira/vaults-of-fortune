@@ -82,7 +82,7 @@ const CurrentContest: NextPage = () => {
             <Portfolio />
           </div>
           <div>
-            <Round />
+            <Round showRoundCalculating={showRoundCalculating} roundNumber={roundNumber} />
           </div>
         </div>
       </div>
@@ -99,7 +99,7 @@ const CurrentContest: NextPage = () => {
             <div className="flex justify-center">
               <Image src="/roundstart.png" width="350" height="350" alt="vaults of fortune banner" />
             </div>
-            <p className="text-center text-3xl">Allocate your funds before the clock runs out!</p>
+            <p className="text-center text-3xl">Allocate your funds before the time runs out!</p>
           </div>
         </Modal>
       )}
