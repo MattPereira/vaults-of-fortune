@@ -1,26 +1,26 @@
 import React from "react";
-import { formatEther } from "viem";
+// import { formatEther } from "viem";
 import { hardhat } from "viem/chains";
-import { useAccount } from "wagmi";
+// import { useAccount } from "wagmi";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import { SwitchTheme } from "~~/components/SwitchTheme";
 import { BuidlGuidlLogo } from "~~/components/assets/BuidlGuidlLogo";
-import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
+// import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { getTargetNetwork } from "~~/utils/scaffold-eth";
 
 /**
  * Site footer
  */
 export const Footer = () => {
-  const account = useAccount();
+  // const account = useAccount();
 
   const isLocalNetwork = getTargetNetwork().id === hardhat.id;
 
-  const { data: userGoldBalance } = useScaffoldContractRead({
-    contractName: "GoldToken",
-    functionName: "balanceOf",
-    args: [account.address],
-  });
+  // const { data: userGoldBalance } = useScaffoldContractRead({
+  //   contractName: "GoldToken",
+  //   functionName: "balanceOf",
+  //   args: [account.address],
+  // });
 
   return (
     <div className="min-h-0 py-5 px-1 mb-11 lg:mb-0">
@@ -29,9 +29,9 @@ export const Footer = () => {
           <div className="hidden md:flex md:flex-col md:flex-row gap-2 pointer-events-auto">
             <SwitchTheme className={`pointer-events-auto ${isLocalNetwork ? "self-end md:self-auto" : ""}`} />
           </div>
-          <div className="text-xl border px-2 rounded-md py-1">
+          {/* <div className="text-xl border px-2 rounded-md py-1">
             Your <span className="text-yellow-400">GODL</span> Reserves: {formatEther(userGoldBalance || 0n)}
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="w-full">

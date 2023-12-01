@@ -3,85 +3,78 @@ import React, { useEffect, useState } from "react";
 import { useScaffoldContractRead, useScaffoldEventHistory, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
 export const Round = () => {
-  const [isRoundClosing, setIsRoundClosing] = useState(false);
+  // const [isRoundClosing, setIsRoundClosing] = useState(false);
 
-  const { data: roundNumber } = useScaffoldContractRead({
-    contractName: "Market",
-    functionName: "getCurrentRoundNumber",
-  });
-
-  const { data: roundState } = useScaffoldContractRead({
-    contractName: "Market",
-    functionName: "getCurrentRoundState",
-  });
-
-  const closingOrCalculating = roundState === 1 || roundState === 2;
-
-  const { data: roundTimeRemaining } = useScaffoldContractRead({
-    contractName: "Market",
-    functionName: "getRoundTimeRemaining",
-  });
-
-  // callback triggers every new block number - ish?
-  // const unwatch = watchBlockNumber({ listen: (roundState || 0) < 2 }, blockNumber => {
-  //   console.log("refetching time remaining!!!");
-  //   refetchTimeRemaining();
-  //   console.log(blockNumber);
+  // const { data: roundNumber } = useScaffoldContractRead({
+  //   contractName: "Market",
+  //   functionName: "getCurrentRoundNumber",
   // });
 
-  useScaffoldEventSubscriber({
-    contractName: "Market",
-    eventName: "RoundStart",
+  // const { data: roundState } = useScaffoldContractRead({
+  //   contractName: "Market",
+  //   functionName: "getCurrentRoundState",
+  // });
 
-    listener: logs => {
-      console.log("RoundOpen", logs);
-      setIsRoundClosing(false);
-    },
-  });
+  // const closingOrCalculating = roundState === 1 || roundState === 2;
 
-  useScaffoldEventSubscriber({
-    contractName: "Market",
-    eventName: "RoundClosing",
+  // const { data: roundTimeRemaining } = useScaffoldContractRead({
+  //   contractName: "Market",
+  //   functionName: "getRoundTimeRemaining",
+  // });
 
-    listener: logs => {
-      console.log("RoundClosing", logs);
-      setIsRoundClosing(true);
-    },
-  });
+  // useScaffoldEventSubscriber({
+  //   contractName: "Market",
+  //   eventName: "RoundStart",
 
-  useScaffoldEventSubscriber({
-    contractName: "Market",
-    eventName: "RoundCalculating",
+  //   listener: logs => {
+  //     console.log("RoundOpen", logs);
+  //     setIsRoundClosing(false);
+  //   },
+  // });
 
-    listener: logs => {
-      console.log("RoundCalculating", logs);
-      setIsRoundClosing(true);
-    },
-  });
+  // useScaffoldEventSubscriber({
+  //   contractName: "Market",
+  //   eventName: "RoundClosing",
 
-  useScaffoldEventSubscriber({
-    contractName: "Market",
-    eventName: "ContestClosed",
-    listener: logs => {
-      console.log("RoundCalculating", logs);
-      setIsRoundClosing(false);
-    },
-  });
+  //   listener: logs => {
+  //     console.log("RoundClosing", logs);
+  //     setIsRoundClosing(true);
+  //   },
+  // });
 
-  const roundStateToName: {
-    [key: number]: string;
-  } = {
-    0: "Open",
-    1: "Closing",
-    2: "Calculating",
-    3: "Closed",
-  };
+  // useScaffoldEventSubscriber({
+  //   contractName: "Market",
+  //   eventName: "RoundCalculating",
+
+  //   listener: logs => {
+  //     console.log("RoundCalculating", logs);
+  //     setIsRoundClosing(true);
+  //   },
+  // });
+
+  // useScaffoldEventSubscriber({
+  //   contractName: "Market",
+  //   eventName: "ContestClosed",
+  //   listener: logs => {
+  //     console.log("RoundCalculating", logs);
+  //     setIsRoundClosing(false);
+  //   },
+  // });
+
+  // const roundStateToName: {
+  //   [key: number]: string;
+  // } = {
+  //   0: "Open",
+  //   1: "Closing",
+  //   2: "Calculating",
+  //   3: "Closed",
+  // };
 
   return (
     <>
       <div className="mb-5">
-        <h3 className="text-center text-3xl xl:text-4xl font-cubano mb-8">Round</h3>
-        <div className="stats w-full bg-[#FFFFFF15] border border-[#FFFFFF88]">
+        <h3 className="text-center text-3xl xl:text-4xl font-cubano mb-8">ROI</h3>
+        {/* <div className="stats w-full bg-[#FFFFFF15] border border-[#FFFFFF88]">
           <div className="stat place-items-center">
             <div className="stat-title">Number</div>
             <div className="stat-value text-4xl">{roundNumber?.toString()} of 3</div>
@@ -95,7 +88,7 @@ export const Round = () => {
             <div className="stat-title">Clock</div>
             <div className="stat-value">{isRoundClosing ? "0" : Number(roundTimeRemaining) || 0}</div>
           </div>
-        </div>
+        </div> */}
       </div>
       <RoiTable />
     </>
@@ -119,10 +112,12 @@ type RoundResultsData = {
 const RoiTable = () => {
   const [roundResults, setRoundResults] = useState<RoundResultsData[]>([]);
 
-  const { data: currentContest } = useScaffoldContractRead({
+  const { data: currentContestNumber } = useScaffoldContractRead({
     contractName: "Market",
-    functionName: "currentContest",
+    functionName: "getCurrentContestNumber",
   });
+
+  console.log("currentContestNumber", currentContestNumber);
 
   const { data: events, isLoading: isLoadingEvents } = useScaffoldEventHistory({
     contractName: "Market",
@@ -130,26 +125,26 @@ const RoiTable = () => {
     // Specify the starting block number from which to read events, this is a bigint.
     // fromBlock: 0n,
     fromBlock: 43030910n,
-    blockData: true,
+    // blockData: true,
     // Apply filters to the event based on parameter names and values { [parameterName]: value },
-    filters: { contestNumber: currentContest },
-    transactionData: true,
-    receiptData: true,
+    filters: { contestNumber: currentContestNumber },
+    // transactionData: true,
+    // receiptData: true,
   });
 
   console.log("ROUND ROI events", events);
 
-  useScaffoldEventSubscriber({
-    contractName: "Market",
-    eventName: "ContestOpened",
+  // useScaffoldEventSubscriber({
+  //   contractName: "Market",
+  //   eventName: "ContestOpened",
 
-    listener: logs => {
-      logs.forEach(log => {
-        console.log("ContestOpened", log);
-        setRoundResults([]);
-      });
-    },
-  });
+  //   listener: logs => {
+  //     logs.forEach(log => {
+  //       console.log("ContestOpened", log);
+  //       setRoundResults([]);
+  //     });
+  //   },
+  // });
 
   useScaffoldEventSubscriber({
     contractName: "Market",
