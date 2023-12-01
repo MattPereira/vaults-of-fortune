@@ -3,6 +3,7 @@ import { formatEther, formatUnits, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { IVaultManager, useVaultManager } from "~~/hooks/useVaultManager";
+import { formatWithCommas } from "~~/utils/formatWithCommas";
 
 /** Component to render the vaults
  *
@@ -139,13 +140,13 @@ export const Vaults = () => {
             <div className="flex justify-between items-center mb-3 gap-5 xl:gap-10">
               <h2 className="mb-3 ml-3 text-3xl xl:text-4xl font-cubano text-center">{vault.title}</h2>
               <div>
-                <h6 className="text-center text-2xl mb-3 bg-base-200 py-5 rounded-xl w-44">
+                <h6 className="text-center text-2xl mb-3 bg-base-200 py-5 rounded-xl w-48 font-cubano">
                   <span
-                    className={`mr-1 font-bold ${Number(vault.minimumROI) < 0 ? "text-red-500" : "text-green-500"}`}
+                    className={`mr-1 font-cubano ${Number(vault.minimumROI) < 0 ? "text-red-500" : "text-green-500"}`}
                   >
                     {Number(vault.minimumROI) || 0}%
                   </span>{" "}
-                  to <span className="text-green-500 font-bold ml-1">{Number(vault.maximumROI) || 0}%</span>
+                  to <span className="text-green-500 font-cubano ml-1">{Number(vault.maximumROI) || 0}%</span>
                 </h6>
               </div>
             </div>
@@ -163,14 +164,14 @@ export const Vaults = () => {
                   <tbody>
                     <tr className="border-b-2 border-[#FFFFFF22]">
                       <th>Assets</th>
-                      <td>{Number(formatUnits(vault.totalAssets || 0n, 18)).toFixed(1)}</td>
-                      <td>{Number(formatUnits(vault.maxWithdraw || 0n, 18)).toFixed(1)}</td>
-                      <td>GLD</td>
+                      <td>{formatWithCommas(Number(formatUnits(vault.totalAssets || 0n, 18)).toFixed(0))}</td>
+                      <td>{formatWithCommas(Number(formatUnits(vault.maxWithdraw || 0n, 18)).toFixed(0))}</td>
+                      <td>GODL</td>
                     </tr>
                     <tr>
                       <th>Supply</th>
-                      <td>{Number(formatUnits(vault.totalSupply || 0n, 18)).toFixed(1)}</td>
-                      <td>{Number(formatUnits(vault.maxRedeem || 0n, 18)).toFixed(1)}</td>
+                      <td>{formatWithCommas(Number(formatUnits(vault.totalSupply || 0n, 18)).toFixed(0))}</td>
+                      <td>{formatWithCommas(Number(formatUnits(vault.maxRedeem || 0n, 18)).toFixed(0))}</td>
                       <td>Shares</td>
                     </tr>
                   </tbody>

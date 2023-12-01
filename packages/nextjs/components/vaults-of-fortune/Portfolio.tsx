@@ -145,7 +145,7 @@ export const Portfolio = () => {
               )} */}
             </div>
           </div>
-          <div className="text-center text-2xl mt-3">{formatEther(userGoldBalance || 0n)} GODL </div>
+          {/* <div className="text-center text-2xl mt-3">{formatEther(userGoldBalance || 0n)} GODL </div> */}
         </>
       ) : (
         <div className="text-center h-full flex flex-col justify-center items-center">

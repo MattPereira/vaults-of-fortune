@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { formatEther } from "viem";
 import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldContractRead, useScaffoldEventHistory, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
+import { formatWithCommas } from "~~/utils/formatWithCommas";
 
 interface IPlayerScores {
   contestNumber: number | undefined;
@@ -155,7 +156,7 @@ export const Leaderboard = () => {
                   <td>
                     <Address size="lg" address={score.player} />
                   </td>
-                  <td>{score.totalAssets.toFixed(0)}</td>
+                  <td>{formatWithCommas(score.totalAssets.toFixed(0))}</td>
                 </tr>
               );
             })}

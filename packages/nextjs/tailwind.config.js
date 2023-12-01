@@ -72,7 +72,7 @@ module.exports = {
   },
   theme: {
     fontFamily: {
-      sans: ["Didact Gothic", "Tahoma", "Verdana", "sans-serif"],
+      sans: ["Inter", "Tahoma", "Verdana", "sans-serif"],
     },
     extend: {
       colors: {
