@@ -29,7 +29,7 @@ error Market__UpkeepNotNeeded();
 contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	enum RoundState {
 		OPEN,
-		CLOSING,
+		// CLOSING,
 		CALCULATING,
 		CLOSED
 	}
@@ -211,27 +211,27 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 	 * @notice caller's GLD balance must be fully allocated in vaults
 	 */
 
-	function startClosing() external {
-		require(
-			isPlayer(msg.sender),
-			"Only active players can start the closing process"
-		);
-		require(
-			currentRound.state == RoundState.OPEN,
-			"Current round must be open to start the closing process"
-		);
-		require(
-			token.balanceOf(msg.sender) == 0,
-			"Your GLD must be fully allocated in order to start the closing process"
-		);
+	// function startClosing() external {
+	// 	require(
+	// 		isPlayer(msg.sender),
+	// 		"Only active players can start the closing process"
+	// 	);
+	// 	require(
+	// 		currentRound.state == RoundState.OPEN,
+	// 		"Current round must be open to start the closing process"
+	// 	);
+	// 	require(
+	// 		token.balanceOf(msg.sender) == 0,
+	// 		"Your GLD must be fully allocated in order to start the closing process"
+	// 	);
 
-		currentRound.state = RoundState.CLOSING;
-		emit RoundClosing(
-			currentRound.number,
-			currentContest.number,
-			block.timestamp
-		);
-	}
+	// 	currentRound.state = RoundState.CLOSING;
+	// 	emit RoundClosing(
+	// 		currentRound.number,
+	// 		currentContest.number,
+	// 		block.timestamp
+	// 	);
+	// }
 
 	/** Owner of contract can pause/unpause the game
 	 * @dev prevents upkeep from triggering indefinitely
@@ -265,13 +265,11 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		}
 
 		bool contestOpen = currentContest.state == ContestState.OPEN;
-		bool roundClosing = currentRound.state == RoundState.CLOSING;
+		// bool roundClosing = currentRound.state == RoundState.CLOSING;
 		bool hasPlayers = players.length > 0;
 		bool maxTimePassed = (block.timestamp - lastTimestamp) > roundInterval;
 
-		upkeepNeeded = (contestOpen &&
-			hasPlayers &&
-			(roundClosing || maxTimePassed));
+		upkeepNeeded = (contestOpen && hasPlayers && maxTimePassed);
 		return (upkeepNeeded, "0x0");
 	}
 
@@ -305,13 +303,19 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		);
 	}
 
-	function emergencyRequestRandomWords() external onlyOwner {
+	function manuallyRequestRandomWords() external onlyOwner {
 		vrfCoordinator.requestRandomWords(
 			keyHash,
 			subscriptionId,
 			requestConfirmations,
 			callbackGasLimit,
 			numWords
+		);
+
+		emit RoundCalculating(
+			currentRound.number,
+			currentContest.number,
+			block.timestamp
 		);
 	}
 
@@ -355,19 +359,19 @@ contract Market is VRFConsumerBaseV2, AutomationCompatibleInterface, Ownable {
 		}
 
 		// emit event with each players updated total assets
-		// for (uint i = 0; i < players.length; i++) {
-		// 	address player = players[i];
-		// 	uint256 totalAssets = lowRiskVault.maxWithdraw(player) +
-		// 		mediumRiskVault.maxWithdraw(player) +
-		// 		highRiskVault.maxWithdraw(player) +
-		// 		token.balanceOf(player);
-		// 	emit PlayerTotalAssetUpdate(
-		// 		currentContest.number,
-		// 		currentRound.number,
-		// 		player,
-		// 		totalAssets
-		// 	);
-		// }
+		for (uint i = 0; i < players.length; i++) {
+			address player = players[i];
+			uint256 totalAssets = lowRiskVault.maxWithdraw(player) +
+				mediumRiskVault.maxWithdraw(player) +
+				highRiskVault.maxWithdraw(player) +
+				token.balanceOf(player);
+			emit PlayerTotalAssetUpdate(
+				currentContest.number,
+				currentRound.number,
+				player,
+				totalAssets
+			);
+		}
 	}
 
 	/** Uses random value to distribute/take tokens to/from the vaults

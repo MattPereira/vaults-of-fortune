@@ -231,7 +231,13 @@ export const Vaults = () => {
                           disabled={!((userGoldBalance ?? 0) > 0) || vaultDeposit[vault.key].amount === "0"}
                           onClick={async () => {
                             setMaxDeposit((userGoldBalance || 0n) - parseEther(vaultDeposit[vault.key].amount));
-                            await vault.deposit();
+
+                            try {
+                              await vault.deposit();
+                            } catch {
+                              setMaxDeposit(maxDeposit + parseEther(vaultDeposit[vault.key].amount));
+                            }
+
                             setVaultDeposit(prevState => ({
                               ...prevState,
                               [vault.key]: {

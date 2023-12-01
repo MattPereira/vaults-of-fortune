@@ -2577,7 +2577,7 @@ const deployedContracts = {
   },
   80001: {
     GoldToken: {
-      address: "0x88CA96372D2196aAcaa9093fca361C576b2d171c",
+      address: "0x03910EA285e741225a8eBd0046b8B12E1690C9a1",
       abi: [
         {
           inputs: [],
@@ -2857,7 +2857,7 @@ const deployedContracts = {
       ],
     },
     HighRiskVault: {
-      address: "0x0fBf225a33b81942aAC95a69514990ce9583cb54",
+      address: "0x913CC2b11Cc3FC7237FB4751C0FF95e6B405191F",
       abi: [
         {
           inputs: [
@@ -3649,7 +3649,7 @@ const deployedContracts = {
       ],
     },
     LowRiskVault: {
-      address: "0xCb53D95C67c12D1db7A73bfCB36d7eE18CA6Af24",
+      address: "0x5402d699E9FA1dA201E846097ee02eef0FE4B85f",
       abi: [
         {
           inputs: [
@@ -4441,7 +4441,7 @@ const deployedContracts = {
       ],
     },
     Market: {
-      address: "0xc60D0494C120Fd0D233Fe35bbAE2b4e9812Ae937",
+      address: "0xB1D926d3543c1860bE69fee7f1D15A0C3EFB801D",
       abi: [
         {
           inputs: [
@@ -4827,13 +4827,6 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "emergencyRequestRandomWords",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
           name: "enterContest",
           outputs: [],
           stateMutability: "nonpayable",
@@ -5014,6 +5007,13 @@ const deployedContracts = {
         },
         {
           inputs: [],
+          name: "manuallyRequestRandomWords",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
           name: "mediumRiskVault",
           outputs: [
             {
@@ -5143,13 +5143,6 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "startClosing",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
           name: "subscriptionId",
           outputs: [
             {
@@ -5210,7 +5203,7 @@ const deployedContracts = {
       ],
     },
     MediumRiskVault: {
-      address: "0xDd3325B8209bfD7eFB2781aDe9b953D053324b10",
+      address: "0x68A2600c7c2fF387B677Ce73fFC9a76302AB5Ec1",
       abi: [
         {
           inputs: [

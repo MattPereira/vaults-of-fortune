@@ -117,8 +117,6 @@ const RoiTable = () => {
     functionName: "getCurrentContestNumber",
   });
 
-  console.log("currentContestNumber", currentContestNumber);
-
   const { data: events, isLoading: isLoadingEvents } = useScaffoldEventHistory({
     contractName: "Market",
     eventName: "RoundROIResults",
@@ -194,6 +192,19 @@ const RoiTable = () => {
     }
   };
 
+  const generatePlaceholderData = () => ({
+    contestNumber: 0,
+    roundNumber: 0,
+    lowRiskVaultROI: 0,
+    mediumRiskVaultROI: 0,
+    highRiskVaultROI: 0,
+  });
+
+  const tableRows =
+    roundResults.length >= 3
+      ? roundResults
+      : [...roundResults, ...Array(3 - roundResults.length).fill(generatePlaceholderData())];
+
   return (
     <div className="overflow-x-auto">
       <table className="table text-xl">
@@ -206,12 +217,18 @@ const RoiTable = () => {
           </tr>
         </thead>
         <tbody>
-          {roundResults.map(result => (
-            <tr key={result.roundNumber} className="border-b border-[#FFFFFF33]">
-              <th>{result.roundNumber}</th>
-              <td className={roiColor(result.lowRiskVaultROI)}>{result.lowRiskVaultROI}%</td>
-              <td className={roiColor(result.mediumRiskVaultROI)}>{result.mediumRiskVaultROI}%</td>
-              <td className={roiColor(result.highRiskVaultROI)}>{result.highRiskVaultROI}%</td>
+          {tableRows.map((result, index) => (
+            <tr key={index} className="border-b border-[#FFFFFF33]">
+              <th>{index + 1}</th>
+              <td className={roiColor(result.lowRiskVaultROI)}>
+                {result.lowRiskVaultROI ? `${result.lowRiskVaultROI}%` : "-"}
+              </td>
+              <td className={roiColor(result.mediumRiskVaultROI)}>
+                {result.mediumRiskVaultROI ? `${result.mediumRiskVaultROI}%` : "-"}
+              </td>
+              <td className={roiColor(result.highRiskVaultROI)}>
+                {result.highRiskVaultROI ? `${result.highRiskVaultROI}%` : "-"}
+              </td>
             </tr>
           ))}
         </tbody>

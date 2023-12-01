@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { ArcElement, Chart as ChartJS, Tooltip } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { formatEther } from "viem";
@@ -15,19 +15,19 @@ ChartJS.register(ArcElement, Tooltip);
 // };
 
 export const Portfolio = () => {
-  const [isPlayer, setIsPlayer] = useState(false);
+  // const [isPlayer, setIsPlayer] = useState(false);
   const account = useAccount();
 
-  const { data: players } = useScaffoldContractRead({
-    contractName: "Market",
-    functionName: "getPlayers",
-  });
+  // const { data: players } = useScaffoldContractRead({
+  //   contractName: "Market",
+  //   functionName: "getPlayers",
+  // });
 
-  useEffect(() => {
-    if (players !== undefined && account.address !== undefined) {
-      setIsPlayer(players.includes(account.address));
-    }
-  }, [players, account.address]);
+  // useEffect(() => {
+  //   if (players !== undefined && account.address !== undefined) {
+  //     setIsPlayer(players.includes(account.address));
+  //   }
+  // }, [players, account.address]);
 
   const {
     writeAsync: enterContest,
@@ -38,14 +38,14 @@ export const Portfolio = () => {
     functionName: "enterContest",
   });
 
-  const {
-    writeAsync: startClosing,
-    // isLoading,
-    // isMining,
-  } = useScaffoldContractWrite({
-    contractName: "Market",
-    functionName: "startClosing",
-  });
+  // const {
+  //   writeAsync: startClosing,
+  //   // isLoading,
+  //   // isMining,
+  // } = useScaffoldContractWrite({
+  //   contractName: "Market",
+  //   functionName: "startClosing",
+  // });
 
   const { data: userGoldBalance } = useScaffoldContractRead({
     contractName: "GoldToken",
@@ -71,10 +71,10 @@ export const Portfolio = () => {
     args: [account.address],
   });
 
-  const { data: currentRoundState } = useScaffoldContractRead({
-    contractName: "Market",
-    functionName: "getCurrentRoundState",
-  });
+  // const { data: currentRoundState } = useScaffoldContractRead({
+  //   contractName: "Market",
+  //   functionName: "getCurrentRoundState",
+  // });
 
   const formattedLowRisk = +formatEther(lowRiskAssets || 0n);
   const formattedMediumRisk = +formatEther(mediumRiskAssets || 0n);
@@ -120,14 +120,15 @@ export const Portfolio = () => {
 
   return (
     <>
-      {isPlayer ? (
+      {totalAssets > 0 ? (
         <>
           <h3 className="text-center font-cubano text-3xl xl:text-4xl mb-8">Portfolio</h3>
 
           <div className="flex justify-center">
             <div className="w-[300px] h-[300px] relative">
               <Doughnut data={data} />
-              {currentRoundState === 0 && userGoldBalance === 0n && (
+
+              {/* {currentRoundState === 0 && userGoldBalance === 0n && (
                 <button
                   style={{
                     position: "absolute",
@@ -141,10 +142,10 @@ export const Portfolio = () => {
                 >
                   Panic
                 </button>
-              )}
+              )} */}
             </div>
           </div>
-          <div className="text-center text-2xl mt-3">{formatEther(userGoldBalance || 0n)} GLD tokens </div>
+          <div className="text-center text-2xl mt-3">{formatEther(userGoldBalance || 0n)} GODL </div>
         </>
       ) : (
         <div className="text-center h-full flex flex-col justify-center items-center">

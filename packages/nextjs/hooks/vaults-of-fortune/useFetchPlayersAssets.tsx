@@ -35,7 +35,6 @@ export function useFetchPlayersAssets() {
       // const contracts = (deployedContracts as GenericContractsDeclaration)[chainId]
       const contracts = deployedContracts[80001];
 
-      console.log("contract AVI", contracts.Market.abi);
       const players = await publicClient.readContract({
         address: contracts.Market.address,
         abi: contracts.Market.abi,

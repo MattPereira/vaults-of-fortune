@@ -157,7 +157,7 @@ const CurrentContest: NextPage = () => {
                         <th>Medium Risk</th>
                         <td
                           className={`font-bold ${
-                            roundResults.lowRiskVaultROI > 0 ? "text-green-500" : "text-red-500"
+                            roundResults.mediumRiskVaultROI > 0 ? "text-green-500" : "text-red-500"
                           }`}
                         >
                           {roundResults.mediumRiskVaultROI}%
