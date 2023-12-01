@@ -13,7 +13,7 @@ import { useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
 const CurrentContest: NextPage = () => {
   const [showRoundStartModal, setShowRoundStartModal] = useState(false);
-  const [showRoundCalculating, setShowRoundCalculating] = useState(true);
+  const [showRoundCalculating, setShowRoundCalculating] = useState(false);
   const [isRoundEnd, setIsRoundEnd] = useState(false);
   const [roundNumber, setRoundNumber] = useState(0);
   const [roundResults, setRoundResults] = useState({

@@ -71,9 +71,6 @@ module.exports = {
     ],
   },
   theme: {
-    fontFamily: {
-      sans: ["Inter", "Tahoma", "Verdana", "sans-serif"],
-    },
     extend: {
       colors: {
         secondary: "#FFFFFF3D",
@@ -90,7 +87,6 @@ module.exports = {
       },
       fontFamily: {
         cubano: ["cubano", "sans-serif"],
-        gothic: ["didact gothic", "sans-serif"],
       },
     },
   },
