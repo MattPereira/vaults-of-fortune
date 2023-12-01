@@ -146,7 +146,8 @@ export const Vaults = () => {
                   >
                     {Number(vault.minimumROI) || 0}%
                   </span>{" "}
-                  to <span className="text-green-500 font-cubano ml-1">{Number(vault.maximumROI) || 0}%</span>
+                  <span className="text-xl">to</span>{" "}
+                  <span className="text-green-500 font-cubano ml-1">{Number(vault.maximumROI) || 0}%</span>
                 </h6>
               </div>
             </div>

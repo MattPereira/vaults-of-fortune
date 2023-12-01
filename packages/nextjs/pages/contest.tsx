@@ -13,7 +13,7 @@ import { useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
 const CurrentContest: NextPage = () => {
   const [showRoundStartModal, setShowRoundStartModal] = useState(false);
-  const [showRoundClosingModal, setShowRoundClosingModal] = useState(false);
+  const [showRoundCalculating, setShowRoundCalculating] = useState(true);
   const [isRoundEnd, setIsRoundEnd] = useState(false);
   const [roundNumber, setRoundNumber] = useState(0);
   const [roundResults, setRoundResults] = useState({
@@ -38,12 +38,12 @@ const CurrentContest: NextPage = () => {
 
   useScaffoldEventSubscriber({
     contractName: "Market",
-    eventName: "RoundClosing",
+    eventName: "RoundCalculating",
     listener: logs => {
       logs.map(log => {
         const { roundNumber } = log.args;
         setRoundNumber(Number(roundNumber));
-        setShowRoundClosingModal(true);
+        setShowRoundCalculating(true);
       });
     },
   });
@@ -104,8 +104,8 @@ const CurrentContest: NextPage = () => {
         </Modal>
       )}
 
-      {showRoundClosingModal && (
-        <Modal isOpen={showRoundClosingModal} onClose={() => setShowRoundClosingModal(false)}>
+      {showRoundCalculating && (
+        <Modal isOpen={showRoundCalculating} onClose={() => setShowRoundCalculating(false)}>
           <div className="h-[550px] flex flex-col justify-center">
             <h3 className="font-cubano text-4xl text-center mb-10">Round Closing Soon</h3>
             <div className="flex justify-center mb-5">
