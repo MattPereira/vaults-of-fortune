@@ -110,7 +110,7 @@ const CurrentContest: NextPage = () => {
             <h3 className="font-cubano text-4xl text-center mb-10">Round Closing Soon</h3>
             <div className="flex justify-center mb-5">
               <Image
-                src="/closing.png"
+                src="/round-closing.png"
                 width="700"
                 height="700"
                 alt="vaults of fortune banner"
