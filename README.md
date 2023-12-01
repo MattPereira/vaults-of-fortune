@@ -27,5 +27,6 @@ A contest where players compete for the highest return on investment over three 
 
 ## TODO
 
-- Fix "callback gas limit exceeded" error that occurs when calling `requestRandomness` on VRF Coordinator. Only happens sometimes.
-- Hook up better modal component that displays based on events triggered at start, middle, and end of rounds
+- Add the graph to impliment an all time leaderboard across games and rounds and built sort feature
+  - https://github.com/kmjones1979/full-stack-dapp-workshop
+- Add dynamic svg nft that gets minted to the champion of each contest
